@@ -1,4 +1,5 @@
 "use strict";
+//LOG IN&OUT, INJECT EDITBTN
 // API documentation: SWAGGER UI http://localhost:5678/api-docs/#/
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -99,9 +100,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Event listener on edit button to show the modal
         document.getElementById('editBtn').addEventListener('click', async () => {
             if (!works || works.length === 0) {
-                await getWorks(); // Wait for data to be fetched
+                
             }
-            showEditModal(works); // Show the modal once the data is available
+            //Display & populate modal from modal.js
+            createModal(modalWindow1);
         });
     }
 

@@ -42,16 +42,15 @@ function showNotification(message, type = 'info') {
     // Set the message
     notification.textContent = message;
 
-    // Ensure the notification is visible and above all other elements
     notification.style.display = 'block';
-    notification.style.zIndex = '9999'; // Make sure it's above everything else
+    notification.style.zIndex = '9999';
 
-    // Append the notification to the body
     document.body.appendChild(notification);
 
-    // Automatically remove the notification after 3 seconds
+    // Timer to remove the notification
     setTimeout(() => {
         notification.remove();
     }, 3000);
 }
-showNotification('Message example', 'info');//"info", "success" or "error"
+//Test notifications:
+//showNotification('Message example', 'info');//"info", "success" or "error"
