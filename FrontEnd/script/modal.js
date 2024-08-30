@@ -54,33 +54,30 @@ function createModal(populateModalFunction = null) {
     // Populate modal content with provided function (if any)
     if (populateModalFunction) {
         populateModalFunction(modalHeader, modalContent, modalFooter);
-    } else {
-        // If no content, add a default close button
-        const defaultCloseButton = document.createElement('button');
-        defaultCloseButton.classList.add('close');
-        defaultCloseButton.title = 'Close';
-        defaultCloseButton.innerHTML = '&times;';
-        modalHeader.appendChild(defaultCloseButton);
-
-        // Add event listener to the default close button
-        defaultCloseButton.addEventListener('click', () => {
-            closeModal(editModal);
-        });
     }
 
     // Closing the modal
     // Close on click outside the modal window
     modalBackground.addEventListener('click', (e) => {
         if (e.target === modalBackground) {
-            closeModal(editModal); // Close the modal if the background is clicked
+            closeModal(editModal);
+            console.log("Closing modal clicking outside");
         }
     });
 
     // Close on pressing Esc
     window.addEventListener('keydown', (e) => {
         if (e.key === "Escape" || e.key === "Esc") {
-            closeModal(editModal); // Close the modal if the Esc key is pressed
+            closeModal(editModal);
+            console.log("Closing modal pressing Esc.");
         }
+    });
+
+    // Add event listener to the default close button
+    const closeBtn = document.querySelector('.close')
+    closeBtn.addEventListener('click', () => {
+        closeModal(editModal);
+        console.log("Closing modal clicking X");
     });
 
     /**
@@ -89,10 +86,15 @@ function createModal(populateModalFunction = null) {
      * @param {HTMLElement} modal - The modal element to be closed.
      */
     function closeModal(modal) {
+        if (!document.body.contains(modal)) {
+            return; // Exit the function if the modal is not in the DOM
+        }
         modal.querySelector('.modal-window').style.opacity = '0'; // Set opacity to 0 for fade-out
         setTimeout(() => {
-            modal.classList.remove('show'); // Remove the 'show' class
-            document.body.removeChild(modal); // Remove the modal from the DOM
+            if (document.body.contains(modal)) {
+                modal.classList.remove('show'); // Remove the 'show' class
+                document.body.removeChild(modal); // Remove the modal from the DOM
+            }
         }, 500);
     }
 
@@ -132,16 +134,36 @@ function modalWindow1(header, content, footer) {
     header.appendChild(flexSpace);
     header.appendChild(closeButton);
 
+    /*F0R WINDOW 2
+    const backButton = document.createElement('button');
+    backButton.classList.add('back'); // Add class for the back button
+    backButton.title = 'Back'; // Set title attribute
+    backButton.style.display = 'none'; // Initially hide the back button
+    backButton.innerHTML = '<i class="fa-solid fa-arrow-left" id="modal-return"></i>'; // Set the back button icon
+
+    const flexSpace = document.createElement('div');
+    flexSpace.classList.add('modal-flex-space'); // Add flexible space for header layout
+
+    const closeButton = document.createElement('button');
+    closeButton.classList.add('close'); // Add class for the close button
+    closeButton.title = 'Close'; // Set title attribute
+    closeButton.innerHTML = '&times;'; // Set the close button content
+
+    header.appendChild(backButton);
+    header.appendChild(flexSpace);
+    header.appendChild(closeButton);
+    */
     // CONTENT
     const galleryTitle = document.createElement('h1');
     galleryTitle.id = 'gallery-edit-title'; // Set ID for the gallery title
     galleryTitle.textContent = 'Gallerie photo'; // Set text content for the title
-
+    // GALLERY ROLL (adminGallery)
     const galleryRoll = document.createElement('div');
     galleryRoll.classList.add('gallery-roll'); // Add class for the gallery roll
 
     content.appendChild(galleryTitle);
     content.appendChild(galleryRoll);
+
     const addPictureButton = document.createElement('button');
     addPictureButton.id = 'add-picture-btn'; // Set ID for the add photo button
     addPictureButton.textContent = 'Ajouter une photo'; // Set text content for the button
@@ -149,9 +171,53 @@ function modalWindow1(header, content, footer) {
 
     content.appendChild(addPictureButton);
 
-    // FOOTER
+    // FOOTER (no footer)
 
     // Return any elements for later access
     return { galleryRoll, addPictureButton, backButton, closeButton };
+
+}
+
+function populateAdminGallery(galleryRoll, works) {
+    if (!galleryRoll) {
+        console.error("Gallery container not found.");
+        return;
+    }
+
+    // Clear existing content
+    galleryRoll.innerHTML = "";
+
+    // Populate the gallery with admin items
+    data.forEach((works) => {
+        const articleAdmin = document.createElement("article");
+        articleAdmin.classList.add("article-admin");
+        articleAdmin.setAttribute("data-category", item.category.name);
+
+        const adminImg = document.createElement("img");
+        adminImg.src = item.imageUrl;
+        adminImg.alt = item.title;
+
+        const deleteIcon = document.createElement('i');
+        deleteIcon.classList.add('fa-solid', 'fa-trash', 'delete-icon');
+        deleteIcon.title = 'Delete';
+
+        // Add event listener for deleting the item
+        deleteIcon.addEventListener('click', async () => {
+            const result = await httpDelete(works_endpoint, item.id, authToken);
+            if (result) {
+                showNotification('Photo deleted successfully', true);
+                // Remove the deleted item from the DOM
+                articleAdmin.remove();
+            } else {
+                showNotification('Error deleting the photo', false);
+            }
+        });
+
+        articleAdmin.appendChild(adminImg);
+        articleAdmin.appendChild(deleteIcon);
+
+        galleryRoll.appendChild(articleAdmin);
+        console.log("Added:", articleAdmin);
+    });
 }
 

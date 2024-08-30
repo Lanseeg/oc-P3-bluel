@@ -78,3 +78,31 @@ async function httpPost(url, credentials) {
     }
 }
 
+/**
+ * HTTP DELETE
+ * 
+ * @param {String} endpoint - The endpoint URL to send the DELETE request to
+ * @param {String} id - The ID of the item to delete
+ * @param {String} authToken - The authentication token (if needed)
+ * @returns {Boolean} - Returns true if the deletion was successful, false otherwise
+ */
+async function httpDelete(endpoint, id, authToken) {
+    try {
+        const response = await fetch(`${endpoint}/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to delete the item');
+        }
+
+        return true; // Return true on successful deletion
+    } catch (error) {
+        console.error(error);
+        return false; // Return false on failure
+    }
+}

@@ -104,6 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             //Display & populate modal from modal.js
             createModal(modalWindow1);
+            console.log("Opening modal");
         });
     }
 
