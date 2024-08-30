@@ -1,5 +1,5 @@
 "use strict";
-
+//FILTERS & GALLERY
 /**
  * CALL DISPLAY FUNCTIONS WHEN API DATA IS READY ON utils.js
  * 
@@ -57,31 +57,41 @@ function displayGallery(works) {
 /**
  * CREATE FILTERS (working with getCategories on utils.js)
  * 
- * @param {Array} data - An array of category objects used to create filter buttons
+ * @param {Array} categories - An array of category objects used to create filter buttons
  * 
- * Note: +++ TO ADD +++: hide filters if logged in (requires security.js)
+ * Note: Hides filters if the user is logged in (requires security.js)
  */
 function createFilters(categories) {
-    // Create a container for the filters
+    // Check if user logged in with authToken in session storage
+    const authToken = sessionStorage.getItem('authToken');
+    if (authToken) {
+        console.log("User is logged in, hiding filters.");
+        return;
+    }
+
     const filtersDiv = document.createElement("div");
     filtersDiv.id = "filters";
     filtersDiv.classList.add('filters');
-    // Add an "All" button to show all items
+
+    //"All" button
     const allButton = document.createElement("button");
     allButton.textContent = "Tous";
     allButton.addEventListener("click", () => filterGallery("Tous"));
     filtersDiv.appendChild(allButton);
+
     // Create a button for each category
     categories.forEach(category => {
         const button = document.createElement("button");
-        button.textContent = category.name; // Utilisation de category.name si les catégories ont cette propriété
+        button.textContent = category.name; // Use category.name if categories have this property
         button.addEventListener("click", () => filterGallery(category.name));
         filtersDiv.appendChild(button);
         console.log("category:" + category.name);
     });
-    // Insert the filters container before the gallery
+
+    // Insert the filters container before gallery
     portfolioSection.insertBefore(filtersDiv, galleryDiv);
 }
+
 
 /**
  * Filters the gallery based on the selected category.
@@ -89,9 +99,11 @@ function createFilters(categories) {
  * @param {String} category
  */
 function filterGallery(category) {
+    //Declare works and filter buttons
     const articles = galleryDiv.querySelectorAll(".articleCard");
     const buttons = document.querySelectorAll('.filters button');
     console.log(`Filter selected: ${category}`);
+    //Logic to display or not the work
     articles.forEach(article => {
         if (category === "Tous" || article.getAttribute("data-category") === category) {
             article.style.display = "block";
@@ -99,7 +111,7 @@ function filterGallery(category) {
             article.style.display = "none";
         }
     });
-    // ACTIVE FILTERS
+    // Color the active filter
     buttons.forEach(button => {
         button.classList.remove('active');
     });
