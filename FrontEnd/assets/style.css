@@ -299,11 +299,13 @@ li:hover {
 }
 
 .loading-indicator.success {
-    background-color: #4CAF50; /* Green */
+    background-color: #048508; /* Green */
+	color: #ffffff;
 }
 
 .loading-indicator.error {
-    background-color: #f44336; /* Red */
+    background-color: #e0857f; /* Red */
+	color: #ffffff;
 }
 
 #logoutMessage {

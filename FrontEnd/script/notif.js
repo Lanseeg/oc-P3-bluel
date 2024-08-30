@@ -1,4 +1,5 @@
 "use strict";
+//NOTIFICATION BAR
 const errorMessageSpan = document.querySelector('.error-message');
 // User messages
 const loadingIndicator = document.createElement('div');
@@ -13,3 +14,44 @@ logoutMessage.id = 'logoutMessage';
 logoutMessage.classList.add('hidden');
 logoutMessage.textContent = 'Déconnexion...'; // Logout message
 mainElement.insertAdjacentElement('afterend', logoutMessage);
+
+const authToken = sessionStorage.getItem('authToken');
+
+/**
+ * showNotification with a green, red, or neutral background
+ * 
+ * @param {String} message - The message to display.
+ * @param {String} type - The type of notification: 'success', 'error', or 'info' (default).
+ */
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.classList.add('loading-indicator');
+
+    // Add class based on the type of notification
+    switch (type) {
+        case 'success':
+            notification.classList.add('success');
+            break;
+        case 'error':
+            notification.classList.add('error');
+            break;
+        default:
+            notification.classList.add('info');
+    }
+
+    // Set the message
+    notification.textContent = message;
+
+    // Ensure the notification is visible and above all other elements
+    notification.style.display = 'block';
+    notification.style.zIndex = '9999'; // Make sure it's above everything else
+
+    // Append the notification to the body
+    document.body.appendChild(notification);
+
+    // Automatically remove the notification after 3 seconds
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+showNotification('Message example', 'info');//"info", "success" or "error"
