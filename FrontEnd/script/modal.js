@@ -106,12 +106,6 @@ function createModal(populateModalFunction = null) {
  */
 function modalWindow1(header, content, footer, closeModal) {
     // HEADER
-    const backButton = document.createElement('button');
-    backButton.classList.add('back');
-    backButton.title = 'Back';
-    backButton.style.display = 'none'; // Hide the back button in window 1
-    backButton.innerHTML = '<i class="fa-solid fa-arrow-left" id="modal-return"></i>'; // Set the back button icon
-
     const flexSpace = document.createElement('div');
     flexSpace.classList.add('modal-flex-space');
 
@@ -120,9 +114,14 @@ function modalWindow1(header, content, footer, closeModal) {
     closeButton.title = 'Close';
     closeButton.innerHTML = '&times;';
 
-    header.appendChild(backButton);
     header.appendChild(flexSpace);
     header.appendChild(closeButton);
+
+    // Add close button functionality
+    closeButton.addEventListener('click', () => {
+        closeModal(document.querySelector('#edit-modal'));
+        console.log("Closing modal clicking X");
+    });
 
     // CONTENT
     const galleryTitle = document.createElement('h1');
@@ -146,14 +145,14 @@ function modalWindow1(header, content, footer, closeModal) {
     // Call populateAdminGallery with works from utils.js
     adminGallery(galleryRoll, works);
 
-    // Add close button functionality
-    closeButton.addEventListener('click', () => {
-        closeModal(document.querySelector('#edit-modal'));
-        console.log("Closing modal clicking X");
+    // Listen to add-picture-btn
+    addPictureButton.addEventListener('click', () => {
+        createModal(modalWindow2);
+        console.log("Opening modal 2");
     });
 
     // Return any elements for later access
-    return { galleryRoll, addPictureButton, backButton, closeButton };
+    return { galleryRoll, addPictureButton, closeButton };
 }
 
 /**
@@ -194,6 +193,8 @@ function adminGallery(galleryRoll, works) {
 
         // Delete work if trash icon is clicked
         deleteItem(deleteIcon, articleAdmin, item.id, authToken);
+
+        console.log(`Adding image: ${item.title} in admin Gallery`);
     });
 }
 
@@ -245,4 +246,189 @@ function deleteItem(deleteIcon, articleAdmin, itemId, authToken) {
             cancelNotification.remove();
         }
     });
+}
+
+function modalWindow2(header, content, footer, closeModal) {
+    // HEADER
+    const backButton = document.createElement('button');
+    backButton.classList.add('back');
+    backButton.title = 'Back';
+    backButton.style.display = 'inline'; // Show the back button in window 2
+    backButton.innerHTML = '<i class="fa-solid fa-arrow-left" id="modal-return"></i>'; // Set the back button icon
+
+    const flexSpace = document.createElement('div');
+    flexSpace.classList.add('modal-flex-space');
+
+    const closeButton = document.createElement('button');
+    closeButton.classList.add('close');
+    closeButton.title = 'Close';
+    closeButton.innerHTML = '&times;';
+
+    header.appendChild(backButton);
+    header.appendChild(flexSpace);
+    header.appendChild(closeButton);
+
+    // Add close button functionality
+    closeButton.addEventListener('click', () => {
+        closeModal(document.querySelector('#edit-modal'));
+        console.log("Closing modal clicking X");
+    });
+
+    // Add go back to window 1 (back arrow)
+    backButton.addEventListener('click', () => {
+        createModal(modalWindow1);
+        console.log("Opening modal");
+    });
+
+    // CONTENT
+    const galleryTitle = document.createElement('h1');
+    galleryTitle.id = 'gallery-edit-title';
+    galleryTitle.textContent = 'Ajout photo';
+
+    content.appendChild(galleryTitle);
+
+    // Calls createPhotoForm
+    const photoFormSection = createPhotoForm(categories);
+    content.appendChild(photoFormSection);
+    console.log("Called photoFormSection functin");
+
+    // You can add your form submission logic here, for example:
+    // httpPostImage(url, token, formData);
+
+    // You can add your form submission logic here, for example:
+    // httpPostImage(url, token, formData);
+
+
+    /*
+    return { galleryRoll, addPictureButton, backButton, closeButton };
+    */
+}
+
+/**
+ * Creates and returns a form section for adding a photo.
+ * 
+ * @param {Array} categories - Array of category objects to populate the category dropdown.
+ * @returns {HTMLElement} - The form section element.
+ */
+function createPhotoForm(categories) {
+    const addPhotoContent = document.createElement('div');
+    addPhotoContent.classList.add('add-photo-content');
+
+    const form = document.createElement('form');
+    form.id = 'photoForm';
+
+    // Upload box now inside the form
+    const uploadBox = document.createElement('div');
+    uploadBox.classList.add('upload-box');
+
+    const iconImg = document.createElement('i');
+    iconImg.classList.add('fa-regular', 'fa-image');
+    iconImg.id = 'iconImg';
+
+    const uploadInput = document.createElement('input');
+    uploadInput.type = 'file';
+    uploadInput.id = 'image';
+    uploadInput.name = 'image';
+    uploadInput.accept = '.jpg, .png';
+    uploadInput.required = true;
+
+    const fileUploadNote = document.createElement('p');
+    fileUploadNote.id = 'file-upload-note';
+    fileUploadNote.textContent = 'jpg, png : 4mo max';
+
+    uploadBox.appendChild(iconImg);
+    uploadBox.appendChild(uploadInput);
+    uploadBox.appendChild(fileUploadNote);
+
+    // Append the upload box to the form
+    form.appendChild(uploadBox);
+
+    const formGroup1 = document.createElement('div');
+    formGroup1.classList.add('form-group');
+
+    const labelTitle = document.createElement('label');
+    labelTitle.setAttribute('for', 'photoTitle');
+    labelTitle.textContent = 'Titre';
+
+    const inputTitle = document.createElement('input');
+    inputTitle.type = 'text';
+    inputTitle.id = 'title';
+    inputTitle.name = 'title';
+    inputTitle.maxLength = 60;
+    inputTitle.required = true;
+
+    formGroup1.appendChild(labelTitle);
+    formGroup1.appendChild(inputTitle);
+
+    const formGroup2 = document.createElement('div');
+    formGroup2.classList.add('form-group');
+
+    const labelCategory = document.createElement('label');
+    labelCategory.setAttribute('for', 'photoCategory');
+    labelCategory.textContent = 'Catégorie';
+
+    const selectCategory = document.createElement('select');
+    selectCategory.id = 'category';
+    selectCategory.name = 'category';
+    selectCategory.required = true;
+    
+    // Dynamically populate the select options based on categories
+    categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category.id; // Use the category ID as the value
+        option.textContent = category.name; // Display the category name
+        selectCategory.appendChild(option);
+    });
+
+
+    formGroup2.appendChild(labelCategory);
+    formGroup2.appendChild(selectCategory);
+
+    const borderBottom = document.createElement('div');
+    borderBottom.classList.add('border-bottom');
+
+    form.appendChild(formGroup1);
+    form.appendChild(formGroup2);
+    form.appendChild(borderBottom);
+
+    // Create the Submit Button
+    const submitButton = document.createElement('button');
+    submitButton.type = 'submit';
+    submitButton.classList.add('submit-btn');
+    submitButton.textContent = 'Valider';
+
+    form.appendChild(submitButton);
+
+    // Append the form to the modal content section
+    addPhotoContent.appendChild(form);
+
+    //check authToken on console LOG - to remove after -
+    console.log(authToken);
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault(); // Prevent default form submission
+    
+        const formData = new FormData(form); // Create FormData object from the form
+    
+        // Log the FormData entries to ensure correct data is being sent
+        for (let [key, value] of formData.entries()) {
+            console.log(key, value);
+        }
+    
+        const works_endpoint = 'http://localhost:5678/api/works'; // The actual API endpoint
+    
+        try {
+            const response = await httpPostImage(works_endpoint, authToken, formData);
+            if (response.error) {
+                console.error('Error uploading image:', response.message);
+            } else {
+                console.log('Image uploaded successfully:', response);
+                // Additional logic here, e.g., updating the UI, redirecting, etc.
+            }
+        } catch (error) {
+            console.error('Unexpected error:', error);
+        }
+    });
+    console.log(form);
+    return form;
 }

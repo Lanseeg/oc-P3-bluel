@@ -106,3 +106,34 @@ async function httpDelete(endpoint, id, authToken) {
         return false; // Return false on failure
     }
 }
+
+/**
+ * HTTP POST Work
+ * 
+ * @param {String} works_endpoint - The API endpoint to send the request to.
+ * @param {String} authToken - The authorization token for the request.
+ * @param {FormData} formData - The form data to send in the request body.
+ * @returns {Promise<Object>} - The response from the API in JSON format, or an error object if the request fails.
+ */
+async function httpPostImage(works_endpoint, authToken, formData) {
+    try {
+        const response = await fetch(works_endpoint, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                // 'Content-Type' is not set because `FormData` automatically sets it
+            },
+            body: formData
+        });
+
+        // Check if the response is OK (status code 200-299)
+        if (!response.ok) {
+            throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        alert("HTTP Error: " + error.message);
+        return { error: true, message: error.message }; // Return an error object for better handling
+    }
+}
