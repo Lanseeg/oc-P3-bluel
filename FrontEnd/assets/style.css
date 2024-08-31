@@ -308,6 +308,14 @@ li:hover {
 	color: #ffffff;
 }
 
+#cancelDelete {
+	border: none;
+	text-decoration: underline;
+	font-size: 1.1rem;
+	color: #1d6add;
+	background-color: #e0857f;
+}
+
 #logoutMessage {
 	position: fixed;
 	top: 20px;
@@ -338,7 +346,7 @@ li:hover {
 #editBtn a {
 	text-decoration: none;
 	margin-left: 18px;
-	color: #000000;
+	color: #292727;
 	font-weight: 100;
 }
 
