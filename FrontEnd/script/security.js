@@ -64,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMessageElement.textContent = message;
         errorMessageElement.style.display = 'block';
     }
+
     // LOGOUT
     if (authToken) {
         loginButton.innerHTML = '<a href="#" id="logoutBtn">logout</a>';
@@ -108,11 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Function to display error message in the span element
-    function displayErrorMessage(message) {
-        errorMessageSpan.textContent = message;
-        errorMessageSpan.style.display = 'block';
-    }
+
 
     // Check for auth token on page load
     checkAuthToken();

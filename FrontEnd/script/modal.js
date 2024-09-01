@@ -99,6 +99,7 @@ function createModal(populateModalFunction = null) {
 /**
  * MODAL WINDOW 1 (admin gallery & httpDELETE from utils.js)
  * To be used as a parameter in createModal()
+ * Needs adminGallery, deleteItem & showNotification
  * 
  * @param {HTMLElement} header
  * @param {HTMLElement} content
@@ -229,7 +230,7 @@ function deleteItem(deleteIcon, articleAdmin, itemId, authToken) {
         });
 
         await new Promise((resolve) => setTimeout(resolve, 4300));
-
+        // Call httpDelete
         if (!cancelDeletion) {
             const result = await httpDelete(works_endpoint, itemId, authToken);
             cancelNotification.remove();
@@ -248,12 +249,21 @@ function deleteItem(deleteIcon, articleAdmin, itemId, authToken) {
     });
 }
 
+/**
+ * Populates the admin gallery (in MODAL WINDOW 2)
+ * Needs createPhotoForm
+ * 
+ * @param {HTMLElement} header - The header element of the modal where buttons are added.
+ * @param {HTMLElement} content - The content element of the modal where the form is inserted.
+ * @param {HTMLElement} footer - The footer element of the modal (not used in this window).
+ * @param {Function} closeModal - A callback function to close the modal.
+ */
 function modalWindow2(header, content, footer, closeModal) {
     // HEADER
     const backButton = document.createElement('button');
     backButton.classList.add('back');
     backButton.title = 'Back';
-    backButton.style.display = 'inline'; // Show the back button in window 2
+    backButton.style.display = 'inline'; // Display the back button in the second modal
     backButton.innerHTML = '<i class="fa-solid fa-arrow-left" id="modal-return"></i>'; // Set the back button icon
 
     const flexSpace = document.createElement('div');
@@ -270,42 +280,32 @@ function modalWindow2(header, content, footer, closeModal) {
 
     // Add close button functionality
     closeButton.addEventListener('click', () => {
-        closeModal(document.querySelector('#edit-modal'));
+        closeModal(document.querySelector('#edit-modal')); // Close the modal when clicking the "X" button
         console.log("Closing modal clicking X");
     });
 
-    // Add go back to window 1 (back arrow)
+    // Add go back to the first modal window (back arrow)
     backButton.addEventListener('click', () => {
-        createModal(modalWindow1);
+        createModal(modalWindow1); // Re-open the first modal window
         console.log("Opening modal");
     });
 
     // CONTENT
     const galleryTitle = document.createElement('h1');
     galleryTitle.id = 'gallery-edit-title';
-    galleryTitle.textContent = 'Ajout photo';
+    galleryTitle.textContent = 'Ajout photo'; // Set the title of the second modal
 
     content.appendChild(galleryTitle);
 
-    // Calls createPhotoForm
+    // Calls createPhotoForm to generate and append the form for adding a photo
     const photoFormSection = createPhotoForm(categories);
     content.appendChild(photoFormSection);
-    console.log("Called photoFormSection functin");
-
-    // You can add your form submission logic here, for example:
-    // httpPostImage(url, token, formData);
-
-    // You can add your form submission logic here, for example:
-    // httpPostImage(url, token, formData);
-
-
-    /*
-    return { galleryRoll, addPictureButton, backButton, closeButton };
-    */
+    console.log("Called photoFormSection function");
 }
 
 /**
  * Creates and returns a form section for adding a photo.
+ * Needs handleImagePreview, checkFormValidity & handleFormSubmit
  * 
  * @param {Array} categories - Array of category objects to populate the category dropdown.
  * @returns {HTMLElement} - The form section element.
@@ -314,10 +314,10 @@ function createPhotoForm(categories) {
     const addPhotoContent = document.createElement('div');
     addPhotoContent.classList.add('add-photo-content');
 
+    // Form creation
     const form = document.createElement('form');
     form.id = 'photoForm';
 
-    // Upload box now inside the form
     const uploadBox = document.createElement('div');
     uploadBox.classList.add('upload-box');
 
@@ -330,7 +330,6 @@ function createPhotoForm(categories) {
     uploadInput.id = 'image';
     uploadInput.name = 'image';
     uploadInput.accept = '.jpg, .png';
-    uploadInput.required = true;
 
     const fileUploadNote = document.createElement('p');
     fileUploadNote.id = 'file-upload-note';
@@ -340,7 +339,6 @@ function createPhotoForm(categories) {
     uploadBox.appendChild(uploadInput);
     uploadBox.appendChild(fileUploadNote);
 
-    // Append the upload box to the form
     form.appendChild(uploadBox);
 
     const formGroup1 = document.createElement('div');
@@ -355,7 +353,6 @@ function createPhotoForm(categories) {
     inputTitle.id = 'title';
     inputTitle.name = 'title';
     inputTitle.maxLength = 60;
-    inputTitle.required = true;
 
     formGroup1.appendChild(labelTitle);
     formGroup1.appendChild(inputTitle);
@@ -370,16 +367,14 @@ function createPhotoForm(categories) {
     const selectCategory = document.createElement('select');
     selectCategory.id = 'category';
     selectCategory.name = 'category';
-    selectCategory.required = true;
-    
-    // Dynamically populate the select options based on categories
+
+    // Dynamically populate categories
     categories.forEach(category => {
         const option = document.createElement('option');
-        option.value = category.id; // Use the category ID as the value
+        option.value = category.id; // API accepts only id n°
         option.textContent = category.name; // Display the category name
         selectCategory.appendChild(option);
     });
-
 
     formGroup2.appendChild(labelCategory);
     formGroup2.appendChild(selectCategory);
@@ -391,44 +386,176 @@ function createPhotoForm(categories) {
     form.appendChild(formGroup2);
     form.appendChild(borderBottom);
 
-    // Create the Submit Button
+    // Create the error message span
+    const errorMessage = document.createElement('span');
+    errorMessage.classList.add('error-message');
+    form.appendChild(errorMessage);
+
+    // Create the Submit Button (disabled by default)
     const submitButton = document.createElement('button');
     submitButton.type = 'submit';
     submitButton.classList.add('submit-btn');
     submitButton.textContent = 'Valider';
+    submitButton.style.display = 'none'; // Initially hidden
 
+    // Create the Disabled Submit Button (visible by default)
+    const submitButtonOff = document.createElement('button');
+    submitButtonOff.type = 'button';
+    submitButtonOff.classList.add('submit-btn-off');
+    submitButtonOff.textContent = 'Valider';
+
+    form.appendChild(submitButtonOff);
     form.appendChild(submitButton);
 
-    // Append the form to the modal content section
+    // Append the form
     addPhotoContent.appendChild(form);
 
-    //check authToken on console LOG - to remove after -
-    console.log(authToken);
-
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault(); // Prevent default form submission
-    
-        const formData = new FormData(form); // Create FormData object from the form
-    
-        // Log the FormData entries to ensure correct data is being sent
-        for (let [key, value] of formData.entries()) {
-            console.log(key, value);
-        }
-    
-        const works_endpoint = 'http://localhost:5678/api/works'; // The actual API endpoint
-    
-        try {
-            const response = await httpPostImage(works_endpoint, authToken, formData);
-            if (response.error) {
-                console.error('Error uploading image:', response.message);
-            } else {
-                console.log('Image uploaded successfully:', response);
-                // Additional logic here, e.g., updating the UI, redirecting, etc.
-            }
-        } catch (error) {
-            console.error('Unexpected error:', error);
-        }
+    // Form validation check with checkFormValidity
+    uploadInput.addEventListener('change', function () {
+        handleImagePreview(uploadInput.files[0], uploadBox, uploadInput, () => checkFormValidity(uploadInput, inputTitle, selectCategory, submitButton, submitButtonOff));
     });
-    console.log(form);
-    return form;
+
+    // Check form validity on input change
+    inputTitle.addEventListener('input', () => checkFormValidity(uploadInput, inputTitle, selectCategory, submitButton, submitButtonOff));
+    selectCategory.addEventListener('change', () => checkFormValidity(uploadInput, inputTitle, selectCategory, submitButton, submitButtonOff));
+
+    // Handle the click event on the disabled submit button
+    submitButtonOff.addEventListener('click', function () {
+        errorMessage.textContent = 'Veuillez renseigner tous les champs';
+    });
+
+    // Attach the submit event listener using the new function
+    form.addEventListener('submit', (e) => {
+        handleFormSubmit(e, form, errorMessage, uploadBox, iconImg, uploadInput, fileUploadNote, () => checkFormValidity(uploadInput, inputTitle, selectCategory, submitButton, submitButtonOff));
+    });
+
+    return addPhotoContent;
+}
+
+/**
+ * Handles the image preview when a file is selected.
+ * Needs checkFormValidity
+ * 
+ * @param {File} file - The selected file object.
+ * @param {HTMLElement} uploadBox - The element containing the upload box.
+ * @param {HTMLInputElement} uploadInput - The file input element.
+ * @param {Function} checkFormValidity - Function to check the form's validity and toggle submit buttons.
+ */
+function handleImagePreview(file, uploadBox, uploadInput, checkFormValidity) {
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            // Create the image element
+            const previewImg = document.createElement('img');
+            previewImg.src = e.target.result;
+            previewImg.alt = 'Preview Image';
+            previewImg.classList.add('image-preview');
+
+            uploadBox.innerHTML = '';
+            uploadBox.appendChild(previewImg);
+
+            // Hide input elements
+            uploadInput.style.display = 'none';
+            uploadBox.appendChild(uploadInput);
+
+            // If image clicked, select another picture
+            previewImg.addEventListener('click', function () {
+                uploadInput.click();
+            });
+
+            // Check form validity after image selection
+            checkFormValidity();
+        };
+        reader.readAsDataURL(file);
+    } else {
+        checkFormValidity(); // Ensure form validity is checked if no file is selected
+    }
+}
+
+/**
+ * Checks the validity of the form and toggles the submit button visibility.
+ * 
+ * @param {HTMLInputElement} uploadInput - The file input element.
+ * @param {HTMLInputElement} inputTitle - The title input element.
+ * @param {HTMLSelectElement} selectCategory - The category select element.
+ * @param {HTMLElement} submitButton - The submit button element.
+ * @param {HTMLElement} submitButtonOff - The disabled submit button element.
+ */
+function checkFormValidity(uploadInput, inputTitle, selectCategory, submitButton, submitButtonOff) {
+    const image = uploadInput.files[0];
+    const title = inputTitle.value.trim();
+    const category = selectCategory.value;
+
+    if (image && title && category) {
+        submitButtonOff.style.display = 'none';
+        submitButton.style.display = 'inline-block';
+    } else {
+        submitButtonOff.style.display = 'inline-block';
+        submitButton.style.display = 'none';
+    }
+}
+
+/**
+ * Handles the form submission for uploading an image.
+ * Needs checkFormValidity, httpPostImage from utils.js & showNotification from utils.js
+ * 
+ * @param {Event} e - The event object.
+ * @param {HTMLFormElement} form - The form element.
+ * @param {HTMLElement} errorMessage - The element to display error messages.
+ * @param {HTMLElement} uploadBox - The element containing the upload box.
+ * @param {HTMLElement} iconImg - The icon element to display if the form is reset.
+ * @param {HTMLInputElement} uploadInput - The file input element.
+ * @param {HTMLElement} fileUploadNote - The element displaying the file upload note.
+ * @param {Function} checkFormValidity - Function to check the form's validity and toggle submit buttons.
+ */
+async function handleFormSubmit(e, form, errorMessage, uploadBox, iconImg, uploadInput, fileUploadNote, checkFormValidity) {
+    e.preventDefault(); // Prevent default form submission
+
+    // Clear any previous error messages
+    errorMessage.textContent = '';
+
+    // Validate the form fields again
+    const image = uploadInput.files[0];
+    const title = form.querySelector('#title').value.trim();
+    const category = form.querySelector('#category').value;
+
+    if (!image || !title || !category) {
+        errorMessage.textContent = 'Veuillez renseigner tous les champs';
+        return;
+    }
+
+    const formData = new FormData(form); // Create FormData object from the form
+
+    try {
+        const response = await httpPostImage(works_endpoint, authToken, formData);
+        if (response.error) {
+            console.error('Error uploading image:', response.message);
+            errorMessage.textContent = 'Erreur lors du téléchargement, veuillez essayer de nouveau.'; // Display error message
+            showNotification('Upload failed, please try again', 'error'); // Show error notification
+        } else {
+            console.log('Image uploaded successfully:', response);
+            // +++ NEED TO STOP REFRESHING PAGE AFTER UPLOADING+++
+            errorMessage.textContent = '';
+
+            showNotification('Projet ajouté avec succès!', 'success');
+
+            form.reset();
+
+            // Reset upload box
+            uploadBox.innerHTML = '';
+            uploadBox.appendChild(iconImg);
+            uploadBox.appendChild(uploadInput);
+            uploadBox.appendChild(fileUploadNote);
+
+            // Reset input
+            uploadInput.style.display = 'block';
+
+            // Reset the submit buttons visibility
+            checkFormValidity(); // Reset the buttons after form reset
+        }
+    } catch (error) {
+        console.error('Unexpected error with API:', error);
+        errorMessage.textContent = 'Erreur, svp essayez de nouveau';
+        showNotification('Désolé, erreur lors du téléchargement...', 'error');
+    }
 }

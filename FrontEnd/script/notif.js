@@ -1,7 +1,12 @@
 "use strict";
-//NOTIFICATION BAR
+//Form error message
 const errorMessageSpan = document.querySelector('.error-message');
-// User messages
+// Function to display error message in the span element
+function displayErrorMessage(message) {
+    errorMessageSpan.textContent = message;
+    errorMessageSpan.style.display = 'block';
+}
+// Login & Logout user messages
 const loadingIndicator = document.createElement('div');
 const logoutMessage = document.createElement('div');
 // Message: login
