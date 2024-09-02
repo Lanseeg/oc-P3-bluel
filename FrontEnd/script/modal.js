@@ -1,5 +1,10 @@
 "use strict";
 
+// DEBUGGING Search for window.location or similar in your code
+if (window.location.href.includes('index.html')) {
+    console.log('Navigating to index.html');
+}
+
 // MODAL
 /**
  * CREATE MODAL & POPULATE IT
@@ -240,6 +245,12 @@ function deleteItem(deleteIcon, articleAdmin, itemId, authToken) {
                 showNotification('Photo deleted successfully', 'info');
                 console.log("Deletion successful");
                 articleAdmin.remove();
+
+                // Remove the deleted item from the works array
+                works = works.filter(work => work.id !== itemId);
+
+                // Update the main gallery
+                displayGallery(works);
             } else {
                 showNotification('Error deleting the photo', 'error');
                 console.log("Work couldn't be deleted (backend error)");
@@ -538,11 +549,8 @@ async function handleFormSubmit(e, form, errorMessage, uploadBox, iconImg, uploa
             showNotification('Upload failed, please try again', 'error'); // Show error notification
         } else {
             console.log('Image uploaded successfully:', response);
-            // +++ NEED TO STOP REFRESHING PAGE AFTER UPLOADING+++
             errorMessage.textContent = '';
-
             showNotification('Projet ajouté avec succès!', 'success');
-
             form.reset();
 
             // Reset upload box
@@ -563,3 +571,4 @@ async function handleFormSubmit(e, form, errorMessage, uploadBox, iconImg, uploa
         showNotification('Désolé, erreur lors du téléchargement...', 'error');
     }
 }
+

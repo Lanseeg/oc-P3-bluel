@@ -27,24 +27,26 @@ document.addEventListener("DOMContentLoaded", async () => {
 function displayGallery(works) {
     galleryDiv.innerHTML = "";
     works.forEach((item) => {
+        // Safeguard to ensure category exists
+        if (!item.category || !item.category.name) {
+            console.error('Invalid category for item:', item);
+            return; // Skip this item if it has an invalid category
+        }
+
         // Create article card
         const articleCard = document.createElement("article");
         articleCard.classList.add("articleCard");
         articleCard.setAttribute("data-category", item.category.name);
+
         // Create an image element for the card
         const cardImg = document.createElement("img");
         cardImg.src = item.imageUrl;
         cardImg.alt = item.title;
-        // Create a placeholder
-        cardImg.onerror = () => {
-            cardImg.src = "path/to/placeholder-image.png"; // Remplace par le chemin de ton image de secours
-            cardImg.alt = "Image non disponible";
-            console.log(`Failed to load image for: ${item.title} - URL: ${item.imageUrl}`);
-        };
-        console.log(`Adding image: ${item.title} - URL: ${item.imageUrl}`);
+
         // Create a figcaption
         const cardTitle = document.createElement("figcaption");
         cardTitle.textContent = item.title;
+
         // Append the image and title elements to the article element
         articleCard.appendChild(cardImg);
         articleCard.appendChild(cardTitle);

@@ -38,7 +38,7 @@ async function httpGet(url) {
         // Prevent reloading
         if (response.redirected) {
             console.log('Redirection détectée vers :', response.url);
-            return; // Empêche de suivre la redirection
+            return;
         }
         // -  -
         const data = await response.json();
@@ -95,10 +95,10 @@ async function httpPost(url, credentials) {
 /**
  * HTTP DELETE
  * 
- * @param {String} endpoint - The endpoint URL to send the DELETE request to
- * @param {String} id - The ID of the item to delete
- * @param {String} authToken - The authentication token (if needed)
- * @returns {Boolean} - Returns true if the deletion was successful, false otherwise
+ * @param {String} endpoint - The endpoint URL to send the DELETE request to.
+ * @param {String} id - The ID of the item to delete.
+ * @param {String} authToken - The authentication token.
+ * @returns {Boolean} - Returns true if the deletion was successful, false otherwise.
  */
 async function httpDelete(endpoint, id, authToken) {
     try {
@@ -109,12 +109,9 @@ async function httpDelete(endpoint, id, authToken) {
                 'Content-Type': 'application/json'
             }
         });
-        // Prevent reloading
-        if (response.redirected) {
-            console.log('Redirection détectée vers :', response.url);
-            return false;
-        }
-        // - - 
+
+        console.log('HTTP DELETE response:', response); // Add this line to log the response
+
         if (!response.ok) {
             throw new Error('Failed to delete the item');
         }
@@ -125,6 +122,8 @@ async function httpDelete(endpoint, id, authToken) {
         return false; // Return false on failure
     }
 }
+
+
 
 
 /**

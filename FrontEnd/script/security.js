@@ -87,6 +87,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const authToken = sessionStorage.getItem('authToken');
         if (authToken) {
             injectEditElements();
+            //TO BE REMOVED
+            console.log(authToken);
         }
     }
 
