@@ -132,6 +132,7 @@ function modalWindow1(header, content, footer, closeModal) {
     // GALLERY ROLL (adminGallery)
     const galleryRoll = document.createElement('div');
     galleryRoll.classList.add('gallery-roll');
+    const borderBottom = document.createElement('div');
 
     content.appendChild(galleryTitle);
     content.appendChild(galleryRoll);
@@ -422,10 +423,12 @@ function createPhotoForm(categories) {
     // Handle the click event on the disabled submit button
     submitButtonOff.addEventListener('click', function () {
         errorMessage.textContent = 'Veuillez renseigner tous les champs';
+        console.log("Please choose an image, a title & a category");
     });
 
     // Attach the submit event listener using the new function
     form.addEventListener('submit', (e) => {
+        console.log("Submitting photo upload form");
         handleFormSubmit(e, form, errorMessage, uploadBox, iconImg, uploadInput, fileUploadNote, () => checkFormValidity(uploadInput, inputTitle, selectCategory, submitButton, submitButtonOff));
     });
 
@@ -457,6 +460,7 @@ function handleImagePreview(file, uploadBox, uploadInput, checkFormValidity) {
             // Hide input elements
             uploadInput.style.display = 'none';
             uploadBox.appendChild(uploadInput);
+            console.log("image selected");
 
             // If image clicked, select another picture
             previewImg.addEventListener('click', function () {

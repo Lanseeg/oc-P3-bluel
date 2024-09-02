@@ -23,6 +23,7 @@ async function userLogin() {
 async function initializeData() {
     await getCategories();
     await getWorks();
+
 }
 
 /**
@@ -34,6 +35,12 @@ async function initializeData() {
 async function httpGet(url) {
     try {
         const response = await fetch(url);
+        // Prevent reloading
+        if (response.redirected) {
+            console.log('Redirection détectée vers :', response.url);
+            return; // Empêche de suivre la redirection
+        }
+        // -  -
         const data = await response.json();
         return data;
     } catch (error) {
@@ -69,6 +76,13 @@ async function httpPost(url, credentials) {
             },
             body: JSON.stringify(credentials)
         });
+        // Prevent reloading
+        if (response.redirected) {
+            console.log('Redirection détectée vers :', response.url);
+            return;
+        }
+        // -  -
+
         // Parse response as JSON
         const data = await response.json();
         // Return response data
@@ -95,7 +109,12 @@ async function httpDelete(endpoint, id, authToken) {
                 'Content-Type': 'application/json'
             }
         });
-
+        // Prevent reloading
+        if (response.redirected) {
+            console.log('Redirection détectée vers :', response.url);
+            return false;
+        }
+        // - - 
         if (!response.ok) {
             throw new Error('Failed to delete the item');
         }
@@ -106,6 +125,7 @@ async function httpDelete(endpoint, id, authToken) {
         return false; // Return false on failure
     }
 }
+
 
 /**
  * HTTP POST Work
@@ -125,6 +145,12 @@ async function httpPostImage(works_endpoint, authToken, formData) {
             },
             body: formData
         });
+        // Prevent reloading
+        if (response.redirected) {
+            console.log('Redirection détectée vers :', response.url);
+            return { error: true, message: 'Redirection détectée' };
+        }
+        // - - 
 
         // Check if the response is OK (status code 200-299)
         if (!response.ok) {

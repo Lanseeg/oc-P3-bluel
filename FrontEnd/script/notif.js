@@ -1,5 +1,6 @@
 "use strict";
-//Form error message
+// USER NOTIFICATIONS
+// Form error message
 const errorMessageSpan = document.querySelector('.error-message');
 // Function to display error message in the span element
 function displayErrorMessage(message) {
