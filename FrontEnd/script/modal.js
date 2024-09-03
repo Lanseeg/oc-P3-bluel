@@ -207,7 +207,7 @@ function adminGallery(galleryRoll, works) {
 
 /**
  * DELETE ITEM: Handles the deletion of an item with a cancel option.
- * In use in adminGallery
+ * In use in adminGallery. Needs showNotification & displayGallery.
  * 
  * @param {HTMLElement} deleteIcon - The element that triggers the deletion.
  * @param {HTMLElement} articleAdmin - The item to be deleted.
@@ -242,7 +242,7 @@ function deleteItem(deleteIcon, articleAdmin, itemId, authToken) {
             cancelNotification.remove();
 
             if (result) {
-                showNotification('Photo deleted successfully', 'info');
+                showNotification('Photo supprimée avec succès', 'info');
                 console.log("Deletion successful");
                 articleAdmin.remove();
 
@@ -252,7 +252,7 @@ function deleteItem(deleteIcon, articleAdmin, itemId, authToken) {
                 // Update the main gallery
                 displayGallery(works);
             } else {
-                showNotification('Error deleting the photo', 'error');
+                showNotification('Erreur lors de la suppression de la photo', 'error');
                 console.log("Work couldn't be deleted (backend error)");
             }
         } else {
@@ -309,7 +309,7 @@ function modalWindow2(header, content, footer, closeModal) {
 
     content.appendChild(galleryTitle);
 
-    // Calls createPhotoForm to generate and append the form for adding a photo
+    // Calls createPhotoForm to generate and append the form
     const photoFormSection = createPhotoForm(categories);
     content.appendChild(photoFormSection);
     console.log("Called photoFormSection function");
@@ -437,7 +437,7 @@ function createPhotoForm(categories) {
         console.log("Please choose an image, a title & a category");
     });
 
-    // Attach the submit event listener using the new function
+    // Check form validity on form submission
     form.addEventListener('submit', (e) => {
         console.log("Submitting photo upload form");
         handleFormSubmit(e, form, errorMessage, uploadBox, iconImg, uploadInput, fileUploadNote, () => checkFormValidity(uploadInput, inputTitle, selectCategory, submitButton, submitButtonOff));
@@ -483,7 +483,7 @@ function handleImagePreview(file, uploadBox, uploadInput, checkFormValidity) {
         };
         reader.readAsDataURL(file);
     } else {
-        checkFormValidity(); // Ensure form validity is checked if no file is selected
+        checkFormValidity();
     }
 }
 
@@ -529,7 +529,7 @@ async function handleFormSubmit(e, form, errorMessage, uploadBox, iconImg, uploa
     // Clear any previous error messages
     errorMessage.textContent = '';
 
-    // Validate the form fields again
+    // Recheck form
     const image = uploadInput.files[0];
     const title = form.querySelector('#title').value.trim();
     const category = form.querySelector('#category').value;
@@ -553,6 +553,25 @@ async function handleFormSubmit(e, form, errorMessage, uploadBox, iconImg, uploa
             showNotification('Projet ajouté avec succès!', 'success');
             form.reset();
 
+            // Reformatte la réponse pour qu'elle corresponde au format attendu par displayGallery
+            const category = categories.find(cat => cat.id == response.categoryId);
+            const newWork = {
+                ...response,
+                category: category // Associe la catégorie correspondante
+            };
+
+            // Ajoute le nouveau projet au tableau works
+            works.push(newWork);
+
+            // Met à jour la galerie
+            displayGallery(works);
+
+            // Réinitialise la zone d'upload
+            uploadBox.innerHTML = '';
+            uploadBox.appendChild(iconImg);
+            uploadBox.appendChild(uploadInput);
+            uploadBox.appendChild(fileUploadNote);
+
             // Reset upload box
             uploadBox.innerHTML = '';
             uploadBox.appendChild(iconImg);
@@ -564,6 +583,7 @@ async function handleFormSubmit(e, form, errorMessage, uploadBox, iconImg, uploa
 
             // Reset the submit buttons visibility
             checkFormValidity(); // Reset the buttons after form reset
+
         }
     } catch (error) {
         console.error('Unexpected error with API:', error);
@@ -571,4 +591,3 @@ async function handleFormSubmit(e, form, errorMessage, uploadBox, iconImg, uploa
         showNotification('Désolé, erreur lors du téléchargement...', 'error');
     }
 }
-

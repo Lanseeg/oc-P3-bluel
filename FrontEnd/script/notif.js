@@ -49,7 +49,7 @@ function showNotification(message, type = 'info') {
     notification.textContent = message;
 
     notification.style.display = 'block';
-    notification.style.zIndex = '9999';
+    //notification.style.zIndex = '9999'; Style managed in style.css
 
     document.body.appendChild(notification);
 

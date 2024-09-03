@@ -35,12 +35,6 @@ async function initializeData() {
 async function httpGet(url) {
     try {
         const response = await fetch(url);
-        // Prevent reloading
-        if (response.redirected) {
-            console.log('Redirection détectée vers :', response.url);
-            return;
-        }
-        // -  -
         const data = await response.json();
         return data;
     } catch (error) {
@@ -76,12 +70,6 @@ async function httpPost(url, credentials) {
             },
             body: JSON.stringify(credentials)
         });
-        // Prevent reloading
-        if (response.redirected) {
-            console.log('Redirection détectée vers :', response.url);
-            return;
-        }
-        // -  -
 
         // Parse response as JSON
         const data = await response.json();
@@ -144,12 +132,6 @@ async function httpPostImage(works_endpoint, authToken, formData) {
             },
             body: formData
         });
-        // Prevent reloading
-        if (response.redirected) {
-            console.log('Redirection détectée vers :', response.url);
-            return { error: true, message: 'Redirection détectée' };
-        }
-        // - - 
 
         // Check if the response is OK (status code 200-299)
         if (!response.ok) {
