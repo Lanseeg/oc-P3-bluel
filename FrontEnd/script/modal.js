@@ -62,12 +62,7 @@ function createModal(populateModalFunction = null) {
             return; // Exit the function if the modal is not in the DOM
         }
         modal.querySelector('.modal-window').style.opacity = '0'; // Set opacity to 0 for fade-out
-        setTimeout(() => {
-            if (document.body.contains(modal)) {
-                modal.classList.remove('show'); // Remove the 'show' class
-                document.body.removeChild(modal); // Remove the modal from the DOM
-            }
-        }, 500);
+        setTimeout(() => modal.remove(), 500);
     }
 
     // Populate modal content with provided function (if any)
@@ -212,18 +207,15 @@ function adminGallery(galleryRoll, works) {
 function deleteItem(deleteIcon, articleAdmin, itemId, authToken) {
     deleteIcon.addEventListener('click', async (event) => {
         event.preventDefault();
-        
-        // Utiliser window.confirm pour demander la confirmation
+
         const confirmDeletion = window.confirm("Confirmer la suppression ?");
-        
+
         if (confirmDeletion) {
-            // Call httpDelete si l'utilisateur confirme la suppression
             const result = await httpDelete(works_endpoint, itemId, authToken);
-            
             if (result) {
                 showNotification('Photo supprimée avec succès', 'info');
                 articleAdmin.remove();
-                
+
                 // Met à jour la galerie
                 works = works.filter(work => work.id !== itemId);
                 displayGallery(works);
@@ -287,7 +279,7 @@ function modalWindow2(header, content, footer, closeModal) {
     content.appendChild(galleryTitle);
 
     // Calls createPhotoForm to generate and append the form
-    const photoFormSection = createPhotoForm(categories);
+    const photoFormSection = createPhotoForm();
     content.appendChild(photoFormSection);
     console.log("Called photoFormSection function");
 }
@@ -296,30 +288,29 @@ function modalWindow2(header, content, footer, closeModal) {
  * Creates and returns a form section for adding a photo.
  * Needs handleImagePreview, checkFormValidity & handleFormSubmit
  * 
- * @param {Array} categories - Array of category objects to populate the category dropdown.
  * @returns {HTMLElement} - The form section element.
  */
-function createPhotoForm(categories) {
+function createPhotoForm() {
     const addPhotoContent = document.createElement('div');
     addPhotoContent.classList.add('add-photo-content');
-    
+
     // Form creation
     const form = document.createElement('form');
     form.id = 'photoForm';
-    
+
     const uploadBox = document.createElement('div');
     uploadBox.classList.add('upload-box');
-    
+
     const iconImg = document.createElement('i');
     iconImg.classList.add('fa-regular', 'fa-image');
     iconImg.id = 'iconImg';
-    
+
     // Create a group to modify default file input style
-    const uploadBtnGroup = document.createElement('button');
+    const uploadBtnGroup = document.createElement('a');
     uploadBtnGroup.classList.add('upload-btn-group');
-    
+
     // element p will be styled. Z-index 0
-    const uploadLabel = document.createElement('p');
+    const uploadLabel = document.createElement('span');
     uploadLabel.classList.add('upload-btn');
     uploadLabel.textContent = '+ Ajouter photo';
 
@@ -331,18 +322,18 @@ function createPhotoForm(categories) {
     uploadInput.name = 'image';
     uploadInput.accept = '.jpg, .png';
     // uploadInput.style.zIndex = '1'; // above the label
-    
+
     uploadBtnGroup.appendChild(uploadInput);
     uploadBtnGroup.appendChild(uploadLabel);
-    
+
     const fileUploadNote = document.createElement('p');
     fileUploadNote.id = 'file-upload-note';
     fileUploadNote.textContent = 'jpg, png : 4mo max';
-    
+
     uploadBox.appendChild(iconImg);
     uploadBox.appendChild(uploadBtnGroup);
     uploadBox.appendChild(fileUploadNote);
-    
+
     form.appendChild(uploadBox);
 
     const formGroup1 = document.createElement('div');
@@ -558,17 +549,18 @@ async function handleFormSubmit(e, form, errorMessage, uploadBox, iconImg, uploa
             // Updates gallery
             displayGallery(works);
 
+            // Reset the submit buttons visibility
+            checkFormValidity(); // Reset the buttons after form reset
+
+            /*
             // Reset upload box
             uploadBox.innerHTML = '';
             uploadBox.appendChild(iconImg);
             uploadBox.appendChild(uploadInput);
             uploadBox.appendChild(fileUploadNote);
-
             // Reset input
             uploadInput.style.display = 'block';
-
-            // Reset the submit buttons visibility
-            checkFormValidity(); // Reset the buttons after form reset
+            */
 
         }
     } catch (error) {
