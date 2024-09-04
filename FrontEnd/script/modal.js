@@ -184,7 +184,7 @@ function adminGallery(galleryRoll, works) {
         // Add a delete trash icon
         const deleteIcon = document.createElement('i');
         deleteIcon.classList.add('fa-solid', 'fa-trash', 'delete-icon');
-        deleteIcon.title = 'Delete';
+        deleteIcon.title = 'Supprimer';
 
         // Append the image and delete icon to the article
         articleAdmin.appendChild(adminImg);
@@ -212,49 +212,31 @@ function adminGallery(galleryRoll, works) {
 function deleteItem(deleteIcon, articleAdmin, itemId, authToken) {
     deleteIcon.addEventListener('click', async (event) => {
         event.preventDefault();
-
-        let cancelDeletion = false;
-        console.log("Asking for work deletion, waiting...");
-
-        const cancelNotification = document.createElement('div');
-        cancelNotification.classList.add('loading-indicator', 'error');
-        cancelNotification.innerHTML = `Suppression... <button id="cancelDelete">Annuler</button>`;
-        document.body.appendChild(cancelNotification);
-
-        const cancelButton = document.getElementById('cancelDelete');
-
-        cancelButton.addEventListener('click', () => {
-            cancelDeletion = true;
-            showNotification('Suppression annulée.', 'info');
-            console.log("Deletion cancelled by user");
-            cancelNotification.remove();
-        });
-
-        await new Promise((resolve) => setTimeout(resolve, 4300));
-        // Call httpDelete
-        if (!cancelDeletion) {
+        
+        // Utiliser window.confirm pour demander la confirmation
+        const confirmDeletion = window.confirm("Confirmer la suppression ?");
+        
+        if (confirmDeletion) {
+            // Call httpDelete si l'utilisateur confirme la suppression
             const result = await httpDelete(works_endpoint, itemId, authToken);
-            cancelNotification.remove();
-
+            
             if (result) {
                 showNotification('Photo supprimée avec succès', 'info');
-                console.log("Deletion successful");
                 articleAdmin.remove();
-
-                // Remove the deleted item from the works array
+                
+                // Met à jour la galerie
                 works = works.filter(work => work.id !== itemId);
-
-                // Update the main gallery
                 displayGallery(works);
             } else {
-                showNotification('Erreur lors de la suppression de la photo', 'error');
-                console.log("Work couldn't be deleted (backend error)");
+                showNotification('Erreur lors de la suppression', 'error');
             }
         } else {
-            cancelNotification.remove();
+            // Si l'utilisateur annule la suppression
+            showNotification('Suppression annulée.', 'info');
         }
     });
 }
+
 
 /**
  * Populates the admin gallery (in MODAL WINDOW 2)
