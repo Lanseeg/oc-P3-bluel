@@ -1,4 +1,5 @@
 "use strict";
+
 //FILTERS & GALLERY
 /**
  * CALL DISPLAY FUNCTIONS WHEN API DATA IS READY ON utils.js
@@ -10,12 +11,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (categories.length > 0) {
         createFilters(categories);
     } else {
-        console.log("Les catégories ne sont pas disponibles.");
+        console.log("Can't retrieve categories");
     }
     if (works.length > 0) {
         displayGallery(works);
     } else {
-        console.log("Les travaux ne sont pas disponibles.");
+        console.log("Can't retrieve works");
     }
 });
 
@@ -30,7 +31,7 @@ function displayGallery(works) {
         // Safeguard to ensure category exists
         if (!item.category || !item.category.name) {
             console.error('Invalid category for item:', item);
-            return; // Skip this item if it has an invalid category
+            return;
         }
 
         // Create article card
@@ -64,7 +65,7 @@ function displayGallery(works) {
  * Note: Hides filters if the user is logged in (requires security.js)
  */
 function createFilters(categories) {
-    // Check if user logged in with authToken in session storage
+    // If user logged in do not show the filters
     const authToken = sessionStorage.getItem('authToken');
     if (authToken) {
         console.log("User is logged in, hiding filters.");
@@ -84,7 +85,7 @@ function createFilters(categories) {
     // Create a button for each category
     categories.forEach(category => {
         const button = document.createElement("button");
-        button.textContent = category.name; // Use category.name if categories have this property
+        button.textContent = category.name;
         button.addEventListener("click", () => filterGallery(category.name));
         filtersDiv.appendChild(button);
         console.log("category:" + category.name);
@@ -93,7 +94,6 @@ function createFilters(categories) {
     // Insert the filters container before gallery
     portfolioSection.insertBefore(filtersDiv, galleryDiv);
 }
-
 
 /**
  * Filters the gallery based on the selected category.

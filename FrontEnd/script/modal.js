@@ -1,10 +1,5 @@
 "use strict";
 
-// DEBUGGING Search for window.location or similar in your code
-if (window.location.href.includes('index.html')) {
-    console.log('Navigating to index.html');
-}
-
 // MODAL
 /**
  * CREATE MODAL & POPULATE IT
@@ -325,32 +320,47 @@ function modalWindow2(header, content, footer, closeModal) {
 function createPhotoForm(categories) {
     const addPhotoContent = document.createElement('div');
     addPhotoContent.classList.add('add-photo-content');
-
+    
     // Form creation
     const form = document.createElement('form');
     form.id = 'photoForm';
-
+    
     const uploadBox = document.createElement('div');
     uploadBox.classList.add('upload-box');
-
+    
     const iconImg = document.createElement('i');
     iconImg.classList.add('fa-regular', 'fa-image');
     iconImg.id = 'iconImg';
+    
+    // Create a group to modify default file input style
+    const uploadBtnGroup = document.createElement('button');
+    uploadBtnGroup.classList.add('upload-btn-group');
+    
+    // element p will be styled. Z-index 0
+    const uploadLabel = document.createElement('p');
+    uploadLabel.classList.add('upload-btn');
+    uploadLabel.textContent = '+ Ajouter photo';
 
+    // Hide the input and make it clickable via the label
+    // z-index 1 & opacity 0
     const uploadInput = document.createElement('input');
     uploadInput.type = 'file';
     uploadInput.id = 'image';
     uploadInput.name = 'image';
     uploadInput.accept = '.jpg, .png';
-
+    // uploadInput.style.zIndex = '1'; // above the label
+    
+    uploadBtnGroup.appendChild(uploadInput);
+    uploadBtnGroup.appendChild(uploadLabel);
+    
     const fileUploadNote = document.createElement('p');
     fileUploadNote.id = 'file-upload-note';
     fileUploadNote.textContent = 'jpg, png : 4mo max';
-
+    
     uploadBox.appendChild(iconImg);
-    uploadBox.appendChild(uploadInput);
+    uploadBox.appendChild(uploadBtnGroup);
     uploadBox.appendChild(fileUploadNote);
-
+    
     form.appendChild(uploadBox);
 
     const formGroup1 = document.createElement('div');
@@ -512,7 +522,7 @@ function checkFormValidity(uploadInput, inputTitle, selectCategory, submitButton
 
 /**
  * Handles the form submission for uploading an image.
- * Needs checkFormValidity, httpPostImage from utils.js & showNotification from utils.js
+ * Needs checkFormValidity, httpPostWork from utils.js & showNotification from utils.js
  * 
  * @param {Event} e - The event object.
  * @param {HTMLFormElement} form - The form element.
@@ -542,7 +552,7 @@ async function handleFormSubmit(e, form, errorMessage, uploadBox, iconImg, uploa
     const formData = new FormData(form); // Create FormData object from the form
 
     try {
-        const response = await httpPostImage(works_endpoint, authToken, formData);
+        const response = await httpPostWork(works_endpoint, authToken, formData);
         if (response.error) {
             console.error('Error uploading image:', response.message);
             errorMessage.textContent = 'Erreur lors du téléchargement, veuillez essayer de nouveau.'; // Display error message
@@ -553,24 +563,18 @@ async function handleFormSubmit(e, form, errorMessage, uploadBox, iconImg, uploa
             showNotification('Projet ajouté avec succès!', 'success');
             form.reset();
 
-            // Reformatte la réponse pour qu'elle corresponde au format attendu par displayGallery
+            // Process data for displayGallery
             const category = categories.find(cat => cat.id == response.categoryId);
             const newWork = {
                 ...response,
-                category: category // Associe la catégorie correspondante
+                category: category // Associate categories
             };
 
-            // Ajoute le nouveau projet au tableau works
+            // Adds new project to works
             works.push(newWork);
 
-            // Met à jour la galerie
+            // Updates gallery
             displayGallery(works);
-
-            // Réinitialise la zone d'upload
-            uploadBox.innerHTML = '';
-            uploadBox.appendChild(iconImg);
-            uploadBox.appendChild(uploadInput);
-            uploadBox.appendChild(fileUploadNote);
 
             // Reset upload box
             uploadBox.innerHTML = '';

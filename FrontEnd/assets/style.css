@@ -278,9 +278,11 @@ li:hover {
 	font-size: 1rem;
 }
 
+/* Notifications */
+
 .error-message {
 	text-align: center;
-	padding: 10px 0 20px 0;
+	padding: 6px 0 6px 0;
 	color: #d65353;
 }
 
@@ -299,12 +301,14 @@ li:hover {
 }
 
 .loading-indicator.success {
-    background-color: #048508; /* Green */
+	background-color: #048508;
+	/* Green */
 	color: #ffffff;
 }
 
 .loading-indicator.error {
-    background-color: #e0857f; /* Red */
+	background-color: #e0857f;
+	/* Red */
 	color: #ffffff;
 	z-index: 9999;
 	top: 32px;
@@ -337,7 +341,6 @@ li:hover {
 	display: block;
 }
 
-/*End of login & logout screen */
 /* edit button*/
 #editBtn {
 	font-family: 'Work Sans';
@@ -356,7 +359,6 @@ li:hover {
 	color: #B1663C;
 }
 
-/* end of edit button*/
 /* edit gallery modal */
 #edit-modal {
 	position: fixed;
@@ -408,7 +410,6 @@ li:hover {
 	z-index: 9996;
 	box-sizing: border-box;
 }
-
 
 .modal-background.show {
 	display: block;
@@ -468,9 +469,7 @@ li:hover {
 	line-height: normal;
 	margin: 8px 0px 24px 0px;
 	padding: 10px;
-	/* Ajoute du padding pour que le texte ait plus d'espace autour */
 	box-sizing: border-box;
-	/* Assure que le padding n'affecte pas la taille du conteneur */
 }
 
 .modal-window {
@@ -484,14 +483,12 @@ li:hover {
 	/* Enable scrolling for overflowing content */
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 	padding: 16px;
-	/* Augmente le padding ici pour donner plus d'espace autour du contenu */
 	box-sizing: border-box;
 	transition: opacity 0.5s ease-in-out;
 	opacity: 0;
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
-	/* Alignement en haut pour que le titre soit bien positionné */
 	align-items: center;
 	z-index: 9997;
 }
@@ -550,28 +547,6 @@ li:hover {
 
 }
 
-/* Ensure modal content fits within the modal window */
-.add-photo-form {
-	width: 100%;
-}
-
-.add-photo-content {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	padding: 16px 0px 0px 0px;
-	width: 100%;
-}
-
-/* Style for the form inside the modal */
-#photoForm {
-	display: flex;
-	flex-direction: column;
-	width: 100%;
-	gap: 10px;
-}
-
 #add-picture-btn {
 	font-family: "Syne";
 	border: none;
@@ -591,9 +566,26 @@ li:hover {
 	align-items: center;
 }
 
-#file-upload-note {
-	margin: 16px;
-	color: #747474;
+/* Modal 2: photo upload */
+
+.add-photo-form {
+	width: 100%;
+}
+
+.add-photo-content {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 0px;
+	width: 100%;
+}
+
+#photoForm {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	gap: 10px;
 }
 
 .upload-box {
@@ -617,26 +609,52 @@ li:hover {
 	height: 200px;
 }
 
-#upload-btn {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	border-radius: 45px;
+/* Button group for input and label */
+.upload-btn-group {
+	position: relative;
+	display: inline-block;
 	border: none;
-	border-style: 1px solid;
-	margin: 16px 0px 16px 0px;
-	padding: 8px 8px 8px 8px;
-	width: 40%;
-	min-width: 100px;
-	height: 2.7rem;
-	font-size: 1.1rem;
+	background-color: transparent;
+	cursor: pointer;
+	padding: 10px 20px;
+	font-size: 16px;
+	text-align: center;
+}
+
+/* Label style */
+.upload-btn {
+	z-index: 0;
+	cursor: pointer;
+	display: inline-block;
+	padding: 10px 20px;
+	background-color: #CBD6DC;
+	border: 1px solid #CBD6DC;
 	color: #306685;
-	background: #c9c9c9;
+	font-family: "Work Sans";
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 500;
+	line-height: normal;
+	border-radius: 50px;
+	cursor: pointer;
+	text-align: center;
+}
+
+/* Input style - hidden but clickable */
+.upload-box input[type="file"] {
+	z-index: 1;
+	opacity: 0;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
 	cursor: pointer;
 }
 
-#upload-btn:hover {
-	box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.2);
+#file-upload-note {
+	margin: 8px 0px 16px 0px;
+	color: #747474;
 }
 
 .border-bottom {
@@ -644,7 +662,26 @@ li:hover {
 	margin: 16px 0px 0px 0px;
 }
 
-#submit-btn {
+.submit-btn-off {
+	font-family: "Syne";
+	border: none;
+	font-size: 0.9em;
+	font-weight: 700;
+	color: white;
+	background-color: #A7A7A7;
+	height: 2.5em;
+	text-align: center;
+	border-radius: 60px;
+	cursor: pointer;
+	margin: 24px auto 32px auto;
+	padding: 0px 8px 0px 8px;
+	min-width: 14rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.submit-btn {
 	font-family: "Syne";
 	border: none;
 	font-size: 0.9em;
@@ -672,15 +709,14 @@ li:hover {
 	flex-direction: column;
 }
 
-#photoTitle,
-#photoCategory {
+#title,
+#category {
 	background: #FFF;
 	box-shadow: 0px 4px 14px 0px rgba(0, 0, 0, 0.09);
 	border-style: none;
-	height:4rem;
+	height: 4rem;
 	font-size: 1.5rem;
 }
-
 
 #photoForm label[for="photoTitle"] {
 	color: #3D3D3D;
@@ -699,8 +735,8 @@ li:hover {
 
 #photoForm input[type="text"],
 #photoForm select {
-    font-size: 1.2rem;
-    padding-left: 16px;
+	font-size: 1.2rem;
+	padding-left: 16px;
 	padding-right: 16px;
 	color: #5e5e5e;
 }
@@ -710,8 +746,6 @@ li:hover {
 .hidden {
 	display: none;
 }
-
-/* end of edit gallery modal*/
 
 #introduction {
 	display: flex;

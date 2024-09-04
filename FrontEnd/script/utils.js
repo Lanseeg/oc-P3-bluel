@@ -1,4 +1,5 @@
 "use strict";
+
 // API
 // API documentation: SWAGGER UI http://localhost:5678/api-docs/#/
 const base = "http://localhost:5678/api/"
@@ -98,42 +99,35 @@ async function httpDelete(endpoint, id, authToken) {
             }
         });
 
-        console.log('HTTP DELETE response:', response); // Add this line to log the response
-
+        console.log('HTTP DELETE response:', response);
         if (!response.ok) {
             throw new Error('Failed to delete the item');
         }
-
-        return true; // Return true on successful deletion
+        return true;
     } catch (error) {
         console.error(error);
-        return false; // Return false on failure
+        return false;
     }
 }
 
-
-
-
 /**
- * HTTP POST Work
+ * HTTP POST Work (post new project)
  * 
  * @param {String} works_endpoint - The API endpoint to send the request to.
  * @param {String} authToken - The authorization token for the request.
  * @param {FormData} formData - The form data to send in the request body.
  * @returns {Promise<Object>} - The response from the API in JSON format, or an error object if the request fails.
  */
-async function httpPostImage(works_endpoint, authToken, formData) {
+async function httpPostWork(works_endpoint, authToken, formData) {
     try {
         const response = await fetch(works_endpoint, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${authToken}`,
-                // 'Content-Type' is not set because `FormData` automatically sets it
             },
             body: formData
         });
 
-        // Check if the response is OK (status code 200-299)
         if (!response.ok) {
             throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
         }
@@ -141,6 +135,6 @@ async function httpPostImage(works_endpoint, authToken, formData) {
         return await response.json();
     } catch (error) {
         alert("HTTP Error: " + error.message);
-        return { error: true, message: error.message }; // Return an error object for better handling
+        return { error: true, message: error.message };
     }
 }

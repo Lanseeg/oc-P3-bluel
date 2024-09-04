@@ -1,4 +1,5 @@
 "use strict";
+
 // USER NOTIFICATIONS
 // Form error message
 const errorMessageSpan = document.querySelector('.error-message');
