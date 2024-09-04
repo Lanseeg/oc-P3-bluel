@@ -506,7 +506,7 @@ function checkFormValidity(uploadInput, inputTitle, selectCategory, submitButton
  * @param {HTMLElement} fileUploadNote - The element displaying the file upload note.
  * @param {Function} checkFormValidity - Function to check the form's validity and toggle submit buttons.
  */
-async function handleFormSubmit(e, form, errorMessage, uploadBox, iconImg, uploadInput, fileUploadNote, checkFormValidity) {
+async function handleFormSubmit(e, form, errorMessage, uploadBox, iconImg, uploadInput, fileUploadNote, checkFormValidity, closeModal) {
     e.preventDefault(); // Prevent default form submission
 
     // Clear any previous error messages
@@ -551,6 +551,8 @@ async function handleFormSubmit(e, form, errorMessage, uploadBox, iconImg, uploa
 
             // Reset the submit buttons visibility
             checkFormValidity(); // Reset the buttons after form reset
+
+            createModal(modalWindow2);
 
             /*
             // Reset upload box
