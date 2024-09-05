@@ -35,6 +35,7 @@ Installation et lancement du projet
   Lancer le front-end et interagir avec l'interface pour ajouter, supprimer et gérer les projets.
 
 Points de vigilance
+
   Gestion d'erreurs dans les formulaires d'upload.
   Synchronisation entre l'ajout de nouveaux projets et la mise à jour de la galerie sans rechargement de page.
   Respect du design Figma pour la cohérence visuelle.
