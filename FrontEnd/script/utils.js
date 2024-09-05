@@ -17,9 +17,11 @@ const url_login = `${base}users/login`;
 const auth = document.getElementById('login-form');
 const mainElement = document.querySelector('main');
 const loginButton = document.getElementById('loginBtn');
+
 async function userLogin() {
     await httpPost();
 }
+
 // INITALIZE API DATA. Used on projects.js
 async function initializeData() {
     await getCategories();
@@ -99,7 +101,7 @@ async function httpDelete(endpoint, id, authToken) {
             }
         });
 
-        console.log('HTTP DELETE response:', response);
+        //console.log('HTTP DELETE response:', response);
         if (!response.ok) {
             throw new Error('Failed to delete the item');
         }

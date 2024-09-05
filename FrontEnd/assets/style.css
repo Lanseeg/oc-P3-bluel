@@ -719,7 +719,7 @@ li:hover {
 	font-size: 1.5rem;
 }
 
-#photoForm label[for="photoTitle"] {
+#photoForm label[for="title"] {
 	color: #3D3D3D;
 	font-family: "Work Sans";
 	font-size: 1.3rem;
@@ -727,7 +727,7 @@ li:hover {
 	font-weight: 400;
 }
 
-#photoForm label[for="photoCategory"] {
+#photoForm label[for="category"] {
 	color: #3D3D3D;
 	font-family: "Work Sans";
 	font-size: 1.2rem;

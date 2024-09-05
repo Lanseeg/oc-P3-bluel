@@ -15,13 +15,12 @@ function createModal(populateModalFunction = null) {
         body.removeChild(existingModal);
     }
 
-    // Modal container
     let editModal = document.createElement('aside');
-    editModal.id = 'edit-modal'; // Set the ID for the modal container
+    editModal.id = 'edit-modal';
 
     // Modal background
     let modalBackground = document.createElement('div');
-    modalBackground.classList.add('modal-background'); // Add a background overlay for the modal
+    modalBackground.classList.add('modal-background');
 
     // Modal window structure (header, content, footer)
     let modalWindow = document.createElement('div');
@@ -40,11 +39,8 @@ function createModal(populateModalFunction = null) {
     modalWindow.appendChild(modalContent);
     modalWindow.appendChild(modalFooter);
 
-    // Append the modal window to the background
     modalBackground.appendChild(modalWindow);
-    // Assemble the complete modal
     editModal.appendChild(modalBackground);
-    // Append the modal to the body
     body.appendChild(editModal);
 
     // Fade-in effect
@@ -59,9 +55,9 @@ function createModal(populateModalFunction = null) {
      */
     function closeModal(modal) {
         if (!document.body.contains(modal)) {
-            return; // Exit the function if the modal is not in the DOM
+            return;
         }
-        modal.querySelector('.modal-window').style.opacity = '0'; // Set opacity to 0 for fade-out
+        modal.querySelector('.modal-window').style.opacity = '0';
         setTimeout(() => modal.remove(), 500);
     }
 
@@ -75,7 +71,6 @@ function createModal(populateModalFunction = null) {
     modalBackground.addEventListener('click', (e) => {
         if (e.target === modalBackground) {
             closeModal(editModal);
-            console.log("Closing modal clicking outside");
         }
     });
 
@@ -83,7 +78,6 @@ function createModal(populateModalFunction = null) {
     window.addEventListener('keydown', (e) => {
         if (e.key === "Escape" || e.key === "Esc") {
             closeModal(editModal);
-            console.log("Closing modal pressing Esc.");
         }
     });
 
@@ -113,10 +107,8 @@ function modalWindow1(header, content, footer, closeModal) {
     header.appendChild(flexSpace);
     header.appendChild(closeButton);
 
-    // Add close button functionality
     closeButton.addEventListener('click', () => {
         closeModal(document.querySelector('#edit-modal'));
-        console.log("Closing modal clicking X");
     });
 
     // CONTENT
@@ -142,13 +134,10 @@ function modalWindow1(header, content, footer, closeModal) {
     // Call populateAdminGallery with works from utils.js
     adminGallery(galleryRoll, works);
 
-    // Listen to add-picture-btn
     addPictureButton.addEventListener('click', () => {
         createModal(modalWindow2);
-        console.log("Opening modal 2");
     });
 
-    // Return any elements for later access
     return { galleryRoll, addPictureButton, closeButton };
 }
 
@@ -166,7 +155,6 @@ function adminGallery(galleryRoll, works) {
 
     galleryRoll.innerHTML = "";
 
-    // Populate the gallery with admin items
     works.forEach((item) => {
         const articleAdmin = document.createElement("article");
         articleAdmin.classList.add("article-admin");
@@ -176,22 +164,16 @@ function adminGallery(galleryRoll, works) {
         adminImg.src = item.imageUrl;
         adminImg.alt = item.title;
 
-        // Add a delete trash icon
         const deleteIcon = document.createElement('i');
         deleteIcon.classList.add('fa-solid', 'fa-trash', 'delete-icon');
         deleteIcon.title = 'Supprimer';
 
-        // Append the image and delete icon to the article
         articleAdmin.appendChild(adminImg);
         articleAdmin.appendChild(deleteIcon);
-
-        // Append the article to the gallery roll
         galleryRoll.appendChild(articleAdmin);
 
         // Delete work if trash icon is clicked
         deleteItem(deleteIcon, articleAdmin, item.id, authToken);
-
-        console.log(`Adding image: ${item.title} in admin Gallery`);
     });
 }
 
@@ -216,19 +198,17 @@ function deleteItem(deleteIcon, articleAdmin, itemId, authToken) {
                 showNotification('Photo supprimée avec succès', 'info');
                 articleAdmin.remove();
 
-                // Met à jour la galerie
                 works = works.filter(work => work.id !== itemId);
                 displayGallery(works);
+
             } else {
                 showNotification('Erreur lors de la suppression', 'error');
             }
         } else {
-            // Si l'utilisateur annule la suppression
             showNotification('Suppression annulée.', 'info');
         }
     });
 }
-
 
 /**
  * Populates the admin gallery (in MODAL WINDOW 2)
@@ -240,12 +220,13 @@ function deleteItem(deleteIcon, articleAdmin, itemId, authToken) {
  * @param {Function} closeModal - A callback function to close the modal.
  */
 function modalWindow2(header, content, footer, closeModal) {
+
     // HEADER
     const backButton = document.createElement('button');
     backButton.classList.add('back');
     backButton.title = 'Back';
-    backButton.style.display = 'inline'; // Display the back button in the second modal
-    backButton.innerHTML = '<i class="fa-solid fa-arrow-left" id="modal-return"></i>'; // Set the back button icon
+    backButton.style.display = 'inline';
+    backButton.innerHTML = '<i class="fa-solid fa-arrow-left" id="modal-return"></i>';
 
     const flexSpace = document.createElement('div');
     flexSpace.classList.add('modal-flex-space');
@@ -259,29 +240,24 @@ function modalWindow2(header, content, footer, closeModal) {
     header.appendChild(flexSpace);
     header.appendChild(closeButton);
 
-    // Add close button functionality
     closeButton.addEventListener('click', () => {
-        closeModal(document.querySelector('#edit-modal')); // Close the modal when clicking the "X" button
-        console.log("Closing modal clicking X");
+        closeModal(document.querySelector('#edit-modal'));
     });
 
-    // Add go back to the first modal window (back arrow)
     backButton.addEventListener('click', () => {
-        createModal(modalWindow1); // Re-open the first modal window
-        console.log("Opening modal");
+        createModal(modalWindow1);
     });
 
     // CONTENT
     const galleryTitle = document.createElement('h1');
     galleryTitle.id = 'gallery-edit-title';
-    galleryTitle.textContent = 'Ajout photo'; // Set the title of the second modal
+    galleryTitle.textContent = 'Ajout photo';
 
     content.appendChild(galleryTitle);
 
-    // Calls createPhotoForm to generate and append the form
     const photoFormSection = createPhotoForm();
+
     content.appendChild(photoFormSection);
-    console.log("Called photoFormSection function");
 }
 
 /**
@@ -294,7 +270,6 @@ function createPhotoForm() {
     const addPhotoContent = document.createElement('div');
     addPhotoContent.classList.add('add-photo-content');
 
-    // Form creation
     const form = document.createElement('form');
     form.id = 'photoForm';
 
@@ -305,23 +280,20 @@ function createPhotoForm() {
     iconImg.classList.add('fa-regular', 'fa-image');
     iconImg.id = 'iconImg';
 
-    // Create a group to modify default file input style
     const uploadBtnGroup = document.createElement('a');
     uploadBtnGroup.classList.add('upload-btn-group');
 
-    // element p will be styled. Z-index 0
+    // Needs CSS rule Z-index 0
     const uploadLabel = document.createElement('span');
     uploadLabel.classList.add('upload-btn');
     uploadLabel.textContent = '+ Ajouter photo';
 
-    // Hide the input and make it clickable via the label
-    // z-index 1 & opacity 0
+    // Needs CSS rule z-index 1 & opacity 0
     const uploadInput = document.createElement('input');
     uploadInput.type = 'file';
     uploadInput.id = 'image';
     uploadInput.name = 'image';
     uploadInput.accept = '.jpg, .png';
-    // uploadInput.style.zIndex = '1'; // above the label
 
     uploadBtnGroup.appendChild(uploadInput);
     uploadBtnGroup.appendChild(uploadLabel);
@@ -340,14 +312,14 @@ function createPhotoForm() {
     formGroup1.classList.add('form-group');
 
     const labelTitle = document.createElement('label');
-    labelTitle.setAttribute('for', 'photoTitle');
+    labelTitle.setAttribute('for', 'title');
     labelTitle.textContent = 'Titre';
 
     const inputTitle = document.createElement('input');
     inputTitle.type = 'text';
     inputTitle.id = 'title';
     inputTitle.name = 'title';
-    inputTitle.maxLength = 60;
+    inputTitle.maxLength = 150;
 
     formGroup1.appendChild(labelTitle);
     formGroup1.appendChild(inputTitle);
@@ -356,7 +328,7 @@ function createPhotoForm() {
     formGroup2.classList.add('form-group');
 
     const labelCategory = document.createElement('label');
-    labelCategory.setAttribute('for', 'photoCategory');
+    labelCategory.setAttribute('for', 'category');
     labelCategory.textContent = 'Catégorie';
 
     const selectCategory = document.createElement('select');
@@ -417,12 +389,10 @@ function createPhotoForm() {
     // Handle the click event on the disabled submit button
     submitButtonOff.addEventListener('click', function () {
         errorMessage.textContent = 'Veuillez renseigner tous les champs';
-        console.log("Please choose an image, a title & a category");
     });
 
     // Check form validity on form submission
     form.addEventListener('submit', (e) => {
-        console.log("Submitting photo upload form");
         handleFormSubmit(e, form, errorMessage, uploadBox, iconImg, uploadInput, fileUploadNote, () => checkFormValidity(uploadInput, inputTitle, selectCategory, submitButton, submitButtonOff));
     });
 
@@ -454,7 +424,6 @@ function handleImagePreview(file, uploadBox, uploadInput, checkFormValidity) {
             // Hide input elements
             uploadInput.style.display = 'none';
             uploadBox.appendChild(uploadInput);
-            console.log("image selected");
 
             // If image clicked, select another picture
             previewImg.addEventListener('click', function () {
@@ -531,7 +500,6 @@ async function handleFormSubmit(e, form, errorMessage, uploadBox, iconImg, uploa
             errorMessage.textContent = 'Erreur lors du téléchargement, veuillez essayer de nouveau.'; // Display error message
             showNotification('Upload failed, please try again', 'error'); // Show error notification
         } else {
-            console.log('Image uploaded successfully:', response);
             errorMessage.textContent = '';
             showNotification('Projet ajouté avec succès!', 'success');
             form.reset();

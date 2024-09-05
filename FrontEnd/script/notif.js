@@ -1,22 +1,22 @@
 "use strict";
 
 // USER NOTIFICATIONS
-// Form error message
 const errorMessageSpan = document.querySelector('.error-message');
-// Function to display error message in the span element
+
 function displayErrorMessage(message) {
     errorMessageSpan.textContent = message;
     errorMessageSpan.style.display = 'block';
 }
-// Login & Logout user messages
+
+// Login & Logout user notifications
 const loadingIndicator = document.createElement('div');
 const logoutMessage = document.createElement('div');
-// Message: login
+
 loadingIndicator.classList.add('loading-indicator');
 loadingIndicator.style.display = 'none';
 loadingIndicator.textContent = 'Connexion...'; // Loading message
 mainElement.insertAdjacentElement('afterend', loadingIndicator);
-// Message: logout
+
 logoutMessage.id = 'logoutMessage';
 logoutMessage.classList.add('hidden');
 logoutMessage.textContent = 'Déconnexion...'; // Logout message
@@ -34,7 +34,6 @@ function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.classList.add('loading-indicator');
 
-    // Add class based on the type of notification
     switch (type) {
         case 'success':
             notification.classList.add('success');
@@ -46,11 +45,9 @@ function showNotification(message, type = 'info') {
             notification.classList.add('info');
     }
 
-    // Set the message
     notification.textContent = message;
 
     notification.style.display = 'block';
-    //notification.style.zIndex = '9999'; Style managed in style.css
 
     document.body.appendChild(notification);
 
@@ -59,5 +56,6 @@ function showNotification(message, type = 'info') {
         notification.remove();
     }, 3000);
 }
+
 //Test notifications:
 //showNotification('Message example', 'info');//"info", "success" or "error"

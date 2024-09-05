@@ -10,15 +10,37 @@ document.addEventListener("DOMContentLoaded", async () => {
     await initializeData();
     if (categories.length > 0) {
         createFilters(categories);
-    } else {
-        console.log("Can't retrieve categories");
     }
     if (works.length > 0) {
         displayGallery(works);
-    } else {
-        console.log("Can't retrieve works");
     }
 });
+
+async function checkAuthToken() {
+    const authToken = sessionStorage.getItem('authToken');
+    if (authToken) {
+        injectEditElements();
+    }
+}
+
+// Inject edit elements if user logged in
+function injectEditElements() {
+    // Inject editBtn
+    const editBtn = document.createElement('span');
+    editBtn.id = 'editBtn';
+    editBtn.innerHTML = '<a href="#"><i class="fa-regular fa-pen-to-square"></i>modifier</a>';
+    const portfolioTitle = document.querySelector('#js-portfolio h2');
+    portfolioTitle.appendChild(editBtn);
+
+    document.getElementById('editBtn').addEventListener('click', async () => {
+
+        //Display & populate modal from modal.js
+        createModal(modalWindow1);
+    });
+}
+
+// Check for auth token on page load
+checkAuthToken();
 
 /**
  * CREATE GALLERY (working with getWorks on utils.js)
@@ -28,31 +50,27 @@ document.addEventListener("DOMContentLoaded", async () => {
 function displayGallery(works) {
     galleryDiv.innerHTML = "";
     works.forEach((item) => {
-        // Safeguard to ensure category exists
+
+        //Safeguard
         if (!item.category || !item.category.name) {
             console.error('Invalid category for item:', item);
             return;
         }
 
-        // Create article card
         const articleCard = document.createElement("article");
         articleCard.classList.add("articleCard");
         articleCard.setAttribute("data-category", item.category.name);
 
-        // Create an image element for the card
         const cardImg = document.createElement("img");
         cardImg.src = item.imageUrl;
         cardImg.alt = item.title;
 
-        // Create a figcaption
         const cardTitle = document.createElement("figcaption");
         cardTitle.textContent = item.title;
 
-        // Append the image and title elements to the article element
         articleCard.appendChild(cardImg);
         articleCard.appendChild(cardTitle);
 
-        // Append the article element to the gallery div
         galleryDiv.appendChild(articleCard);
     });
 }
@@ -65,10 +83,10 @@ function displayGallery(works) {
  * Note: Hides filters if the user is logged in (requires security.js)
  */
 function createFilters(categories) {
+    
     // If user logged in do not show the filters
     const authToken = sessionStorage.getItem('authToken');
     if (authToken) {
-        console.log("User is logged in, hiding filters.");
         return;
     }
 
@@ -76,22 +94,18 @@ function createFilters(categories) {
     filtersDiv.id = "filters";
     filtersDiv.classList.add('filters');
 
-    //"All" button
     const allButton = document.createElement("button");
     allButton.textContent = "Tous";
     allButton.addEventListener("click", () => filterGallery("Tous"));
     filtersDiv.appendChild(allButton);
 
-    // Create a button for each category
     categories.forEach(category => {
         const button = document.createElement("button");
         button.textContent = category.name;
         button.addEventListener("click", () => filterGallery(category.name));
         filtersDiv.appendChild(button);
-        console.log("category:" + category.name);
     });
 
-    // Insert the filters container before gallery
     portfolioSection.insertBefore(filtersDiv, galleryDiv);
 }
 
@@ -101,11 +115,10 @@ function createFilters(categories) {
  * @param {String} category
  */
 function filterGallery(category) {
-    //Declare works and filter buttons
+
     const articles = galleryDiv.querySelectorAll(".articleCard");
     const buttons = document.querySelectorAll('.filters button');
-    console.log(`Filter selected: ${category}`);
-    //Logic to display or not the work
+
     articles.forEach(article => {
         if (category === "Tous" || article.getAttribute("data-category") === category) {
             article.style.display = "block";
@@ -113,10 +126,11 @@ function filterGallery(category) {
             article.style.display = "none";
         }
     });
-    // Color the active filter
+
     buttons.forEach(button => {
         button.classList.remove('active');
     });
+
     const activeButton = Array.from(buttons).find(button => button.textContent === category || (category === "Tous" && button.textContent === "Tous"));
     if (activeButton) {
         activeButton.classList.add('active');
