@@ -386,7 +386,6 @@ function createPhotoForm() {
         errorMessage.textContent = 'Veuillez renseigner tous les champs';
     });
 
-    // Check form validity on form submission
     form.addEventListener('submit', (e) => {
         handleFormSubmit(e, form, errorMessage, uploadBox, iconImg, uploadInput, fileUploadNote, () => checkFormValidity(uploadInput, inputTitle, selectCategory, submitButton, submitButtonOff));
     });
@@ -407,7 +406,6 @@ function handleImagePreview(file, uploadBox, uploadInput, checkFormValidity) {
     if (file) {
         const reader = new FileReader();
         reader.onload = function (e) {
-            // Create the image element
             const previewImg = document.createElement('img');
             previewImg.src = e.target.result;
             previewImg.alt = 'Preview Image';
@@ -416,16 +414,13 @@ function handleImagePreview(file, uploadBox, uploadInput, checkFormValidity) {
             uploadBox.innerHTML = '';
             uploadBox.appendChild(previewImg);
 
-            // Hide input elements
             uploadInput.style.display = 'none';
             uploadBox.appendChild(uploadInput);
 
-            // If image clicked, select another picture
             previewImg.addEventListener('click', function () {
                 uploadInput.click();
             });
 
-            // Check form validity after image selection
             checkFormValidity();
         };
         reader.readAsDataURL(file);
@@ -471,12 +466,10 @@ function checkFormValidity(uploadInput, inputTitle, selectCategory, submitButton
  * @param {Function} checkFormValidity - Function to check the form's validity and toggle submit buttons.
  */
 async function handleFormSubmit(e, form, errorMessage, uploadBox, iconImg, uploadInput, fileUploadNote, checkFormValidity, closeModal) {
-    e.preventDefault(); // Prevent default form submission
-
-    // Clear any previous error messages
+    e.preventDefault();
     errorMessage.textContent = '';
 
-    // Recheck form
+    // Check form again
     const image = uploadInput.files[0];
     const title = form.querySelector('#title').value.trim();
     const category = form.querySelector('#category').value;
@@ -486,7 +479,7 @@ async function handleFormSubmit(e, form, errorMessage, uploadBox, iconImg, uploa
         return;
     }
 
-    const formData = new FormData(form); // Create FormData object from the form
+    const formData = new FormData(form);
 
     try {
         const response = await httpPostWork(works_endpoint, authToken, formData);
@@ -502,34 +495,18 @@ async function handleFormSubmit(e, form, errorMessage, uploadBox, iconImg, uploa
             // Process data for displayGallery
             const category = categories.find(cat => cat.id == response.categoryId);
             const newWork = {
-                ...response,
-                category: category // Associate categories
+                ...response, // Spread properties
+                category: category
             };
 
-            // Adds new project to works
+            // Update Galleries
             works.push(newWork);
-
-            // Updates gallery
             displayGallery(works);
-
-            // Reset the submit buttons visibility
-            checkFormValidity(); // Reset the buttons after form reset
-
+            checkFormValidity();
             createModal(modalWindow2);
-
-            /*
-            // Reset upload box
-            uploadBox.innerHTML = '';
-            uploadBox.appendChild(iconImg);
-            uploadBox.appendChild(uploadInput);
-            uploadBox.appendChild(fileUploadNote);
-            // Reset input
-            uploadInput.style.display = 'block';
-            */
-
         }
+
     } catch (error) {
-        console.error('Unexpected error with API:', error);
         errorMessage.textContent = 'Erreur, svp essayez de nouveau';
         showNotification('Désolé, erreur lors du téléchargement...', 'error');
     }
