@@ -335,7 +335,6 @@ function createPhotoForm() {
     selectCategory.id = 'category';
     selectCategory.name = 'category';
 
-    // Dynamically populate categories
     categories.forEach(category => {
         const option = document.createElement('option');
         option.value = category.id; // API accepts only id n°
@@ -353,19 +352,19 @@ function createPhotoForm() {
     form.appendChild(formGroup2);
     form.appendChild(borderBottom);
 
-    // Create the error message span
+    // Error Message
     const errorMessage = document.createElement('span');
     errorMessage.classList.add('error-message');
     form.appendChild(errorMessage);
 
-    // Create the Submit Button (disabled by default)
+    // Submit Button
     const submitButton = document.createElement('button');
     submitButton.type = 'submit';
     submitButton.classList.add('submit-btn');
     submitButton.textContent = 'Valider';
-    submitButton.style.display = 'none'; // Initially hidden
+    submitButton.style.display = 'none';
 
-    // Create the Disabled Submit Button (visible by default)
+    // Deactivated Submit Button (visible by default)
     const submitButtonOff = document.createElement('button');
     submitButtonOff.type = 'button';
     submitButtonOff.classList.add('submit-btn-off');
@@ -374,19 +373,15 @@ function createPhotoForm() {
     form.appendChild(submitButtonOff);
     form.appendChild(submitButton);
 
-    // Append the form
     addPhotoContent.appendChild(form);
 
-    // Form validation check with checkFormValidity
     uploadInput.addEventListener('change', function () {
         handleImagePreview(uploadInput.files[0], uploadBox, uploadInput, () => checkFormValidity(uploadInput, inputTitle, selectCategory, submitButton, submitButtonOff));
     });
 
-    // Check form validity on input change
     inputTitle.addEventListener('input', () => checkFormValidity(uploadInput, inputTitle, selectCategory, submitButton, submitButtonOff));
     selectCategory.addEventListener('change', () => checkFormValidity(uploadInput, inputTitle, selectCategory, submitButton, submitButtonOff));
 
-    // Handle the click event on the disabled submit button
     submitButtonOff.addEventListener('click', function () {
         errorMessage.textContent = 'Veuillez renseigner tous les champs';
     });
