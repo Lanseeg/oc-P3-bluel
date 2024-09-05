@@ -34,10 +34,10 @@ Installation et lancement du projet
   Accéder à la documentation Swagger pour tester les routes API.
   Lancer le front-end et interagir avec l'interface pour ajouter, supprimer et gérer les projets.
 
-Points de vigilance
+  Points de vigilance
 
   Gestion d'erreurs dans les formulaires d'upload.
   Synchronisation entre l'ajout de nouveaux projets et la mise à jour de la galerie sans rechargement de page.
   Respect du design Figma pour la cohérence visuelle.
---
+
 Ce projet a permis de mettre en pratique des compétences en JavaScript et DOM, ainsi que l'intégration de back-end via des appels API.
