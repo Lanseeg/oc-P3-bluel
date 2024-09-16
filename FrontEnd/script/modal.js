@@ -389,7 +389,6 @@ function createPhotoForm() {
     form.addEventListener('submit', (e) => {
         submitButton.disabled = true;
         handleFormSubmit(e, form, errorMessage, uploadBox, iconImg, uploadInput, fileUploadNote, () => checkFormValidity(uploadInput, inputTitle, selectCategory, submitButton, submitButtonOff));
-        submitButton.style.display = 'none';
     });
 
     return addPhotoContent;
