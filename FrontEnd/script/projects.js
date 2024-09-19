@@ -33,8 +33,18 @@ function injectEditElements() {
     portfolioTitle.appendChild(editBtn);
 
     document.getElementById('editBtn').addEventListener('click', async () => {
+        // Display & populate modal from modal.js
+        createModal(modalWindow1);
+    });
 
-        //Display & populate modal from modal.js
+    // Edit mode top bar
+    const editModeBar = document.createElement('div');
+    editModeBar.id = 'editModeBar';
+    editModeBar.innerHTML = '<a href="#"><i class="fa-regular fa-pen-to-square"></i> mode édition</a>';
+
+    document.body.prepend(editModeBar);
+
+    editModeBar.addEventListener('click', async () => {
         createModal(modalWindow1);
     });
 }

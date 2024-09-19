@@ -151,6 +151,27 @@ body {
 	text-decoration: none;
 }
 
+#editModeBar {
+    background-color: #000000;
+    color: #ffffff;
+    text-align: center;
+    padding: 10px 0;
+    width: 100vw;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+#editModeBar a {
+    color: #ffffff; 
+    text-decoration: none;
+}
+
 header {
 	display: flex;
 	justify-content: space-between;
