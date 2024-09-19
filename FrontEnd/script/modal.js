@@ -404,7 +404,31 @@ function createPhotoForm() {
  * @param {Function} checkFormValidity - Function to check the form's validity and toggle submit buttons.
  */
 function handleImagePreview(file, uploadBox, uploadInput, checkFormValidity) {
+    const maxFileSize = 4;
+    const allowedFiles = ['image/jpeg', 'image/png'];
+    const errorMessage = document.querySelector('.error-message');
+
     if (file) {
+        const fileType = file.type;
+        const fileSizeMB = file.size / (1024 * 1024);
+
+        if (!allowedFiles.includes(fileType)) {
+            errorMessage.textContent = 'Veuillez sélectionner un fichier JPG ou PNG.';
+            showNotification('Veuillez sélectionner un fichier JPG ou PNG.', 'error');
+            uploadInput.value = '';
+            checkFormValidity();
+            return;
+        }
+
+        if (fileSizeMB > maxFileSize) {
+            errorMessage.textContent = 'Désolé, la taille du fichier ne doit pas dépasser 4 Mo.';
+            showNotification('Désolé, la taille du fichier ne doit pas dépasser 4 Mo.', 'error');
+            uploadInput.value = '';
+            checkFormValidity();
+            return;
+        }
+
+        // If ok, display the image preview
         const reader = new FileReader();
         reader.onload = function (e) {
             const previewImg = document.createElement('img');
@@ -414,14 +438,15 @@ function handleImagePreview(file, uploadBox, uploadInput, checkFormValidity) {
 
             uploadBox.innerHTML = '';
             uploadBox.appendChild(previewImg);
-
             uploadInput.style.display = 'none';
             uploadBox.appendChild(uploadInput);
 
             previewImg.addEventListener('click', function () {
-                uploadInput.click();
+                uploadInput.click(); // Allow user to click the preview to change the image
             });
 
+            // Clear any error message if file is valid
+            errorMessage.textContent = '';
             checkFormValidity();
         };
         reader.readAsDataURL(file);
@@ -429,6 +454,7 @@ function handleImagePreview(file, uploadBox, uploadInput, checkFormValidity) {
         checkFormValidity();
     }
 }
+
 
 /**
  * Checks the validity of the form and toggles the submit button visibility.
