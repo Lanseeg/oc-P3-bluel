@@ -8,11 +8,9 @@
  */
 document.addEventListener("DOMContentLoaded", async () => {
     await initializeData();
-    if (categories.length > 0) {
-        createFilters(categories);
-    }
     if (works.length > 0) {
         displayGallery(works);
+        createFilters(categories, works);
     }
 });
 
@@ -89,34 +87,46 @@ function displayGallery(works) {
  * CREATE FILTERS (working with getCategories on utils.js)
  * 
  * @param {Array} categories - An array of category objects used to create filter buttons
+ * @param {Array} works - An array of work objects used to check if categories have projects
  * 
- * Note: Hides filters if the user is logged in (requires security.js)
+ * Note: Hides filters if the user is logged in or there are no projects for a category
  */
-function createFilters(categories) {
-    
-    // If user logged in do not show the filters
+function createFilters(categories, works) {
+    // If user is logged in, do not show the filters
     const authToken = sessionStorage.getItem('authToken');
     if (authToken) {
         return;
     }
 
+    // Create filter container
     const filtersDiv = document.createElement("div");
     filtersDiv.id = "filters";
     filtersDiv.classList.add('filters');
 
-    const allButton = document.createElement("button");
-    allButton.textContent = "Tous";
-    allButton.addEventListener("click", () => filterGallery("Tous"));
-    filtersDiv.appendChild(allButton);
+    // "Tous" (All) filter button
+    if (works.length > 0) {
+        const allButton = document.createElement("button");
+        allButton.textContent = "Tous";
+        allButton.addEventListener("click", () => filterGallery("Tous"));
+        filtersDiv.appendChild(allButton);
+    }
 
+    // Only create filter buttons for non-empty categories
     categories.forEach(category => {
-        const button = document.createElement("button");
-        button.textContent = category.name;
-        button.addEventListener("click", () => filterGallery(category.name));
-        filtersDiv.appendChild(button);
+        const worksCheck = works.some(work => work.category.name === category.name);
+
+        if (worksCheck) {
+            const button = document.createElement("button");
+            button.textContent = category.name;
+            button.addEventListener("click", () => filterGallery(category.name));
+            filtersDiv.appendChild(button);
+        }
     });
 
-    portfolioSection.insertBefore(filtersDiv, galleryDiv);
+    // Check filter buttons and append
+    if (filtersDiv.children.length > 0) {
+        portfolioSection.insertBefore(filtersDiv, galleryDiv);
+    }
 }
 
 /**
